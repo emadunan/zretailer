@@ -9,6 +9,7 @@ import Admin from "./pages/Admin";
 import About from "./pages/About";
 import AdminProducts from './pages/Admin-Products';
 import AdminOffers from './pages/Admin-Offers';
+import NotFound from "./pages/Not-Found";
 
 function App() {
   return (
@@ -21,9 +22,11 @@ function App() {
             <Route path="home" element={<Home />}/>
             <Route path="about" element={<About />}/>
             <Route path="admin" element={<Admin />}>
-              <Route path="products" element={<AdminProducts />}/>
+              <Route index element={<AdminProducts />} />
+              <Route path="products" element={<AdminProducts />} />
               <Route path="offers" element={<AdminOffers />}/>
             </Route>
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </main>
