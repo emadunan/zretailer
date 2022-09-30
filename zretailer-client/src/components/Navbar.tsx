@@ -12,10 +12,10 @@ function Navbar() {
                         <li><Link to={"home"}>Home</Link></li>
                         <li><Link to={"about"}>About</Link></li>
                         <li tabIndex={0}>
-                            <Link className="justify-between" to="admin">
+                            <a className="justify-between">
                                 Admin
                                 <svg className="fill-current" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
-                            </Link>
+                            </a>
                             <ul className="p-2">
                                 <li><Link to={"admin/products"}>Products Managmaent</Link></li>
                                 <li><Link to={"admin/offers"}>Orders Managmaent</Link></li>
@@ -29,10 +29,10 @@ function Navbar() {
                 <ul className="menu menu-horizontal p-0">
                     <li><Link to="home">Home</Link></li>
                     <li tabIndex={0}>
-                        <Link to="admin">
+                        <a>
                             Admin
                             <svg className="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
-                        </Link>
+                        </a>
                         <ul className="p-2 bg-white shadow-lg">
                             <li><Link to={"admin/products"}>Products Managmaent</Link></li>
                             <li><Link to={"admin/offers"}>Orders Managmaent</Link></li>
