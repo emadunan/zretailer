@@ -1,6 +1,6 @@
 ---
 name: User Story
-about: User stories for Retailer Project.
+about: Describe this issue template's purpose here.
 title: ''
 labels: ''
 assignees: ''
