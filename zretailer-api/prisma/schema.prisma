@@ -12,10 +12,10 @@ datasource db {
 
 model Product {
   id           Int     @id @default(autoincrement())
-  name         String
+  title        String
   category     String
   desc         String?
-  pkgCapacity  Int
+  pkgCap       Int
   pkgPriceBuy  Int
   pkgPriceSell Int
   unitPrice    Int

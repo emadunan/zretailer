@@ -22,10 +22,10 @@ app.post("/api/products", async (req, res) => {
 
     const product = await prisma.product.create({
         data: {
-            name: productData.name,
+            title: productData.title,
             category: productData.category,
             desc: productData.desc,
-            pkgCapacity: productData.pkgCapacity,
+            pkgCap: productData.pkgCap,
             pkgPriceBuy: productData.pkgPriceBuy,
             pkgPriceSell: productData.pkgPriceSell,
             unitPrice: productData.unitPrice

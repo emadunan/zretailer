@@ -48,14 +48,10 @@ function Navbar() {
                             </a>
                             <ul className="p-2 bg-white">
                                 <li>
-                                    <Link to={"admin/products"}>
-                                        Products
-                                    </Link>
+                                    <Link to={"admin/products"}>Products</Link>
                                 </li>
                                 <li>
-                                    <Link to={"admin/offers"}>
-                                        Orders
-                                    </Link>
+                                    <Link to={"admin/offers"}>Orders</Link>
                                 </li>
                             </ul>
                         </li>

@@ -1,13 +1,18 @@
+import { useSelector } from "react-redux";
+
 import ProductRow from "./ProductRow";
 import Product from "../../interfaces/Product";
+import { RootState } from "../../context/store";
 
-function ProductsTbl(props: any) {
+function ProductsTbl() {
+    const products = useSelector((state: RootState) => state.product.products);
+
     return (
         <div className="overflow-x-auto">
             <table className="table table-compact w-full">
                 <thead>
                     <tr>
-                        <th></th>
+                        <th>#</th>
                         <th>Name</th>
                         <th>Category</th>
                         <th>Pkg Capacity</th>
@@ -18,11 +23,12 @@ function ProductsTbl(props: any) {
                     </tr>
                 </thead>
                 <tbody>
-                    {props.products.map((prod: Product) => {
+                    {products.map((prod: Product, idx) => {
                         return (
                             <ProductRow
                                 key={prod.id}
-                                name={prod.name}
+                                idx={++idx}
+                                title={prod.title}
                                 category={prod.category}
                                 pkgCap={prod.pkgCap}
                                 pkgPriceBuy={prod.pkgPriceBuy}
@@ -36,11 +42,11 @@ function ProductsTbl(props: any) {
                     <tr>
                         <th></th>
                         <th>Name</th>
-                        <th>Job</th>
-                        <th>company</th>
-                        <th>location</th>
-                        <th>Last Login</th>
-                        <th>Favorite Color</th>
+                        <th>Category</th>
+                        <th>Pkg Capacity</th>
+                        <th>Pkg Buy Price</th>
+                        <th>Pkg Sell Price</th>
+                        <th>Unit Price</th>
                         <th></th>
                     </tr>
                 </tfoot>

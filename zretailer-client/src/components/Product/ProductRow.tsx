@@ -3,8 +3,8 @@ import PropTypes, { InferProps } from "prop-types";
 function ProductRow(props: InferProps<typeof ProductRow.propTypes>) {
     return (
         <tr>
-            <th>1</th>
-            <td>{props.name}</td>
+            <th>{props.idx}</th>
+            <td>{props.title}</td>
             <td>{props.category}</td>
             <td>{props.pkgCap}</td>
             <td>{props.pkgPriceBuy}</td>
@@ -19,13 +19,14 @@ function ProductRow(props: InferProps<typeof ProductRow.propTypes>) {
 }
 
 ProductRow.propTypes = {
-    name: PropTypes.string.isRequired,
+    idx: PropTypes.number,
+    title: PropTypes.string.isRequired,
     category: PropTypes.string.isRequired,
     desc: PropTypes.string,
-    pkgCap: PropTypes.string.isRequired,
-    pkgPriceBuy: PropTypes.string.isRequired,
-    pkgPriceSell: PropTypes.string.isRequired,
-    unitPrice: PropTypes.string.isRequired,
+    pkgCap: PropTypes.number.isRequired,
+    pkgPriceBuy: PropTypes.number.isRequired,
+    pkgPriceSell: PropTypes.number.isRequired,
+    unitPrice: PropTypes.number.isRequired,
 };
 
 export default ProductRow;

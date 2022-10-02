@@ -1,12 +1,12 @@
 interface Product {
-    id: string;
-    name: string;
+    id?: string;
+    title: string;
     category: string;
     desc?: string;
-    pkgCap: string;
-    pkgPriceBuy: string;
-    pkgPriceSell: string;
-    unitPrice: string;
+    pkgCap: number;
+    pkgPriceBuy: number;
+    pkgPriceSell: number;
+    unitPrice: number;
 }
 
 export default Product;
