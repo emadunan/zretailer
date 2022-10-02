@@ -32,10 +32,13 @@ app.post("/api/products", async (req, res) => {
         }
     });
 
-    console.log(product);
-    res.json(product);
-    
+    res.json(product);    
 });
+
+app.get("/api/products",async (_req, res) => {
+    const products = await prisma.product.findMany();
+    res.json(products);
+})
 
 // Listen to requests
 app.listen(PORT, () => {
