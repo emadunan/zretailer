@@ -11,8 +11,8 @@ function ProductRow(props: InferProps<typeof ProductRow.propTypes>) {
             <td>{props.pkgPriceSell}</td>
             <td>{props.unitPrice}</td>
             <td>
-                <button className="btn btn-primary btn-sm m-2">Edit</button>
-                <button className="btn btn-error btn-sm m-2">Delete</button>
+                <button className="btn btn-primary btn-xs mx-1">Edit</button>
+                <button className="btn btn-error btn-xs mx-1">Delete</button>
             </td>
         </tr>
     );

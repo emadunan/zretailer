@@ -5,10 +5,14 @@ import Product from "../interfaces/Product";
 
 export interface ProductState {
     products: Product[];
+    pages: number;
+    pageSize: number;
 }
 
 const initialState: ProductState = {
     products: [],
+    pages: 0,
+    pageSize: 0,
 };
 
 export const productSlice = createSlice({
@@ -24,8 +28,17 @@ export const productSlice = createSlice({
         editProduct: (state, action: PayloadAction<Product>) => {
             console.log(action);
         },
-        showProducts: (state, action: PayloadAction<Product[]>) => {
-            state.products = action.payload;
+        showProducts: (
+            state,
+            action: PayloadAction<{
+                products: Product[];
+                pages: number;
+                pageSize: number;
+            }>
+        ) => {
+            state.pages = action.payload.pages;
+            state.products = action.payload.products;
+            state.pageSize = action.payload.pageSize;
         },
     },
 });

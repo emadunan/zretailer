@@ -1,4 +1,4 @@
-import { redirect, useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { getProducts, addProduct } from "../api/products";
@@ -8,7 +8,11 @@ import ProductForm from "../components/Product/ProductForm";
 import { showProducts } from "../context/productSlice";
 
 function AdminProducts() {
-    const loaderData = useLoaderData() as Product[];
+    const loaderData = useLoaderData() as {
+        products: Product[];
+        pages: number;
+        pageSize: number;
+    };
     const dispatch = useDispatch();
 
     dispatch(showProducts(loaderData));
@@ -16,7 +20,11 @@ function AdminProducts() {
     return (
         <div>
             <h1 className="text-lg font-bold">Products</h1>
-            <p>React-router-dom V6.4 new features were used in fetching data by a loader function and make a post request through an action function</p>
+            <p>
+                React-router-dom V6.4 new features were used in fetching data by
+                a loader function and make a post request through an action
+                function
+            </p>
             <ProductForm />
             <ProductsTbl />
         </div>
@@ -25,21 +33,22 @@ function AdminProducts() {
 
 export default AdminProducts;
 
-export async function loader(): Promise<Product[]> {
+export async function loader(): Promise<{
+    products: Product[];
+    pages: number;
+    pageSize: number;
+}> {
     try {
-        const products = getProducts();
-        return products;
+        const data = getProducts();
+        return data;
     } catch (err) {
         if (err instanceof Error) throw new Error(err.message);
         throw new Error("Unexpected Error!");
     }
 }
 
-export async function action({request}: any) {
+export async function action({ request }: any) {
     const formData = await request.formData();
-
-    console.log(formData);
-    
 
     const product: Product = {
         title: formData.get("name"),
@@ -49,16 +58,12 @@ export async function action({request}: any) {
         pkgPriceBuy: +formData.get("pkg-price-buy"),
         pkgPriceSell: +formData.get("pkg-price-sell"),
         unitPrice: +formData.get("unit-price"),
-    }
+    };
 
     try {
-        console.log(product);
-        
-        await addProduct(product)
+        await addProduct(product);
     } catch (err) {
         if (err instanceof Error) throw new Error(err.message);
         throw new Error("Unexpected Error!");
     }
-
-    return redirect("/admin/products");
 }

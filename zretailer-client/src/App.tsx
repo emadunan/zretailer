@@ -12,7 +12,8 @@ import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import About from "./pages/About";
 import AdminProducts, {
-    loader as adminProductsLoader, action as addProductAction
+    loader as adminProductsLoader,
+    action as addProductAction,
 } from "./pages/Admin-Products";
 import AdminOffers from "./pages/Admin-Offers";
 import NotFound from "./pages/Not-Found";

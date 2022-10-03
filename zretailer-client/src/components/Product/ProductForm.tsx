@@ -9,8 +9,12 @@ function ProductForm() {
                 className="input input-sm input-bordered w-full max-w-xs m-2"
                 name="name"
             />
-            <select className="select select-sm select-bordered w-full max-w-xs m-2" name="category">
-                <option disabled defaultValue="category">
+            <select
+                className="select select-sm select-bordered w-full max-w-xs m-2"
+                name="category"
+                defaultValue="category"
+            >
+                <option disabled value="category">
                     Category
                 </option>
                 <option value="meat and fish">Meat and Fish</option>

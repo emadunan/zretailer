@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 
 //
 app.post("/api/products", async (req, res) => {
-    const productData= req.body;
+    const productData = req.body;
 
     const product = await prisma.product.create({
         data: {
@@ -32,12 +32,19 @@ app.post("/api/products", async (req, res) => {
         }
     });
 
-    res.json(product);    
+    res.json(product);
 });
 
-app.get("/api/products",async (_req, res) => {
-    const products = await prisma.product.findMany();
-    res.json(products);
+app.get("/api/products", async (req, res) => {
+    const pageNumbr = +<string>req.query.page || 1;
+    const pageSize = +<string>req.query.size || 4;
+    const skipRecords = (pageNumbr -1)  * pageSize;
+
+    const total = await prisma.product.count();
+    const products = await prisma.product.findMany({ skip: skipRecords, take: pageSize, orderBy: { id: "desc" } });
+
+    const pages = Math.ceil(total / pageSize);
+    res.json({pageSize, pages, products});
 })
 
 // Listen to requests
