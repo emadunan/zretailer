@@ -3,7 +3,9 @@ import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 
-import prisma from "./client";
+import productsRouter from "./controllers/products";
+import { errorHandler, pageNotFoundHandler } from "./controllers/error";
+
 
 // Extract environment variables
 dotenv.config();
@@ -16,36 +18,12 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-//
-app.post("/api/products", async (req, res) => {
-    const productData = req.body;
+// Register Controllers Routes
+app.use("/api", productsRouter);
 
-    const product = await prisma.product.create({
-        data: {
-            title: productData.title,
-            category: productData.category,
-            desc: productData.desc,
-            pkgCap: productData.pkgCap,
-            pkgPriceBuy: productData.pkgPriceBuy,
-            pkgPriceSell: productData.pkgPriceSell,
-            unitPrice: productData.unitPrice
-        }
-    });
-
-    res.json(product);
-});
-
-app.get("/api/products", async (req, res) => {
-    const pageNumbr = +<string>req.query.page || 1;
-    const pageSize = +<string>req.query.size || 4;
-    const skipRecords = (pageNumbr -1)  * pageSize;
-
-    const total = await prisma.product.count();
-    const products = await prisma.product.findMany({ skip: skipRecords, take: pageSize, orderBy: { id: "desc" } });
-
-    const pages = Math.ceil(total / pageSize);
-    res.json({pageSize, pages, products});
-})
+// Handle Errors
+app.use(pageNotFoundHandler);
+app.use(errorHandler);
 
 // Listen to requests
 app.listen(PORT, () => {

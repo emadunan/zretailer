@@ -19,4 +19,13 @@ model Product {
   pkgPriceBuy  Int
   pkgPriceSell Int
   unitPrice    Int
+  offers       Offer[]
+}
+
+model Offer {
+  id        Int       @id @default(autoincrement())
+  percent   Int
+  fromDate  DateTime
+  untilDate DateTime
+  products  Product[]
 }

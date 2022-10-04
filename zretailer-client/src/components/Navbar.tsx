@@ -51,7 +51,7 @@ function Navbar() {
                                     <Link to={"admin/products"}>Products</Link>
                                 </li>
                                 <li>
-                                    <Link to={"admin/offers"}>Orders</Link>
+                                    <Link to={"admin/offers"}>Offers</Link>
                                 </li>
                             </ul>
                         </li>
@@ -87,7 +87,7 @@ function Navbar() {
                             </li>
                             <li>
                                 <Link to={"admin/offers"}>
-                                    Orders Managmaent
+                                    Offers Managmaent
                                 </Link>
                             </li>
                         </ul>
