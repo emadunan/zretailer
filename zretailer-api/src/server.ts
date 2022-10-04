@@ -6,7 +6,6 @@ import cors from "cors";
 import productsRouter from "./controllers/products";
 import { errorHandler, pageNotFoundHandler } from "./controllers/error";
 
-
 // Extract environment variables
 dotenv.config();
 const { PORT } = process.env;
