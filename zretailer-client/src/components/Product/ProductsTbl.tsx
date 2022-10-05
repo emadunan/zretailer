@@ -5,6 +5,7 @@ import Product from "../../interfaces/Product";
 import { RootState } from "../../context/store";
 import { getProducts } from "../../api/products";
 import { showProducts } from "../../context/productSlice";
+import { arrayFromNumbr } from "../../utils/main";
 import { useState } from "react";
 
 function ProductsTbl() {
@@ -16,10 +17,14 @@ function ProductsTbl() {
     const [currentPage, setCurrentPage] = useState(1);
 
     async function getPageProductsHandler(page = 1, size = 4) {
+        // Check page number validity and return if not
         if (page < 1 || page > pages) return;
-        setCurrentPage(page);
+
+        // Get products and persist it in the state
         const data = await getProducts(page, size);
         dispatch(showProducts(data));
+
+        setCurrentPage(page);
     }
 
     return (
@@ -54,26 +59,38 @@ function ProductsTbl() {
                     })}
                 </tbody>
             </table>
-            <select
-                className="select select-bordered select-sm max-w-xs mr-4"
-                defaultValue="page size"
-                onChange={(event) =>
-                    getPageProductsHandler(1, +event.target.value)
-                }
-            >
-                <option disabled value="page size">
-                    Page Size
-                </option>
-                <option value={2}>2</option>
-                <option value={4}>4</option>
-                <option value={8}>8</option>
-                <option value={16}>16</option>
-                <option value={32}>32</option>
-            </select>
-            <div className="btn-group mt-6">
-                <button className="btn btn-sm" onClick={getPageProductsHandler.bind(this, currentPage-1, pageSize)}>«</button>
-                <button className="btn btn-sm" >Page {currentPage} / {pages}</button>
-                <button className="btn btn-sm" onClick={getPageProductsHandler.bind(this, currentPage+1, pageSize)}>»</button>
+            <div className="flex items-center justify-between mt-4">
+                <select
+                    className="select select-bordered select-sm max-w-xs mr-4"
+                    defaultValue="page size"
+                    onChange={(event) =>
+                        getPageProductsHandler(1, +event.target.value)
+                    }
+                >
+                    <option disabled value="page size">
+                        Page Size
+                    </option>
+                    <option value={2}>2</option>
+                    <option value={4}>4</option>
+                    <option value={8}>8</option>
+                    <option value={16}>16</option>
+                    <option value={32}>32</option>
+                </select>
+                <div className="btn-group">
+                    <button className="btn btn-sm" onClick={getPageProductsHandler.bind(this, currentPage - 1, pageSize)}>«</button>
+                    <button className="btn btn-sm" >Page {currentPage} / {pages}</button>
+                    <button className="btn btn-sm" onClick={getPageProductsHandler.bind(this, currentPage + 1, pageSize)}>»</button>
+                </div>
+                <select
+                    className="select select-bordered select-sm max-w-xs mr-4"
+                    value={currentPage}
+                    onChange={(event) => getPageProductsHandler(+event.target.value, pageSize)}
+                >
+                    <option disabled value="page size">
+                        Go To Page
+                    </option>
+                    {arrayFromNumbr(pages).map(page => <option key={page} value={page}>Page {page}</option>)}
+                </select>
             </div>
         </div>
     );
