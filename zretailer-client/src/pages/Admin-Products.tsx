@@ -1,11 +1,31 @@
 import { useLoaderData } from "react-router-dom";
-import { useDispatch } from "react-redux";
 
 import { getProducts, addProduct } from "../api/products";
 import Product from "../interfaces/Product";
 import ProductsTbl from "../components/Product/ProductsTbl";
 import ProductForm from "../components/Product/ProductForm";
-import { showProducts } from "../context/productSlice";
+import { useEffect, useReducer } from "react";
+
+// Products Reducer Setup
+const initialState = {
+    products: [],
+    pages: 0,
+    pageSize: 0,
+    currentPage: 1
+}
+
+function productsReducer(state: any, action: any) {
+    switch (action.type) {
+        case "RENDER_PRODUCTS":
+            return {
+                ...state,
+                ...action.payload
+            };
+
+        default:
+            return state;
+    }
+}
 
 function AdminProducts() {
     const loaderData = useLoaderData() as {
@@ -13,8 +33,22 @@ function AdminProducts() {
         pages: number;
         pageSize: number;
     };
-    const dispatch = useDispatch();
-    dispatch(showProducts(loaderData));
+
+    const [productState, productDispatch] = useReducer(productsReducer, initialState);
+
+    useEffect(() => {
+        productDispatch({ type: "RENDER_PRODUCTS", payload: loaderData });
+    }, [loaderData.products])
+
+    async function getPageProductsHandler(page = 1, size = 4) {        
+        // Check page number validity and return if not
+        if (page < 1 || page > productState.pages) return;
+
+        // Get products and persist it in product state
+        const data = await getProducts(page, size);
+        productDispatch({ type: "RENDER_PRODUCTS", payload: {...data, currentPage: page} });
+    }
+
 
     return (
         <div>
@@ -25,18 +59,19 @@ function AdminProducts() {
                 function
             </p>
             <ProductForm />
-            <ProductsTbl />
+            <ProductsTbl products={productState.products} pages={productState.pages} pageSize={productState.pageSize} currentPage={productState.currentPage} onGetPageProducts={getPageProductsHandler}/>
         </div>
     );
 }
 
 export default AdminProducts;
 
-export async function loader(): Promise<{
+export async function loader(): Promise<{    
     products: Product[];
     pages: number;
     pageSize: number;
 }> {
+
     try {
         const data = getProducts();
         return data;
