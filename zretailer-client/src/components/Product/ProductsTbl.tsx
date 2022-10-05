@@ -3,10 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import ProductRow from "./ProductRow";
 import Product from "../../interfaces/Product";
 import { RootState } from "../../context/store";
-import { arrayFromNumbr, getMiddleThreeNumbrs } from "../../utils/main";
 import { getProducts } from "../../api/products";
 import { showProducts } from "../../context/productSlice";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 
 function ProductsTbl() {
     const dispatch = useDispatch();
@@ -14,61 +13,13 @@ function ProductsTbl() {
         (state: RootState) => state.product
     );
 
-    const [pageMiddle, setPageMiddle] = useState(3);
+    const [currentPage, setCurrentPage] = useState(1);
 
     async function getPageProductsHandler(page = 1, size = 4) {
+        if (page < 1 || page > pages) return;
+        setCurrentPage(page);
         const data = await getProducts(page, size);
         dispatch(showProducts(data));
-    }
-
-    // Implement pagination in the front-end layer
-    let paginationBtnGroup;
-    if (pages > 10) {
-        paginationBtnGroup = (
-            <Fragment>
-                <button
-                    className="btn btn-sm"
-                    key={1}
-                    onClick={getPageProductsHandler.bind(this, 1, pageSize)}
-                >
-                    {1}
-                </button>
-                <button className="btn btn-disabled btn-sm">...</button>
-                {getMiddleThreeNumbrs(pageMiddle, pages).map((n) => (
-                    <button
-                        className="btn btn-sm"
-                        key={n}
-                        data-page={n}
-                        onClick={(event) => {
-                            getPageProductsHandler(n, pageSize);
-                            const el = event.target as HTMLElement;
-                            const currentPage = +(el.dataset.page as string);
-                            setPageMiddle(currentPage * 2);
-                        }}
-                    >
-                        {n}
-                    </button>
-                ))}
-                <button className="btn btn-disabled btn-sm">...</button>
-                <button
-                    className="btn btn-sm"
-                    key={pages}
-                    onClick={getPageProductsHandler.bind(this, pages, pageSize)}
-                >
-                    {pages}
-                </button>
-            </Fragment>
-        );
-    } else {
-        paginationBtnGroup = arrayFromNumbr(pages).map((n) => (
-            <button
-                className="btn btn-sm"
-                key={n}
-                onClick={getPageProductsHandler.bind(this, n, pageSize)}
-            >
-                {n}
-            </button>
-        ));
     }
 
     return (
@@ -119,7 +70,11 @@ function ProductsTbl() {
                 <option value={16}>16</option>
                 <option value={32}>32</option>
             </select>
-            <div className="btn-group mt-6">{paginationBtnGroup}</div>
+            <div className="btn-group mt-6">
+                <button className="btn btn-sm" onClick={getPageProductsHandler.bind(this, currentPage-1, pageSize)}>«</button>
+                <button className="btn btn-sm" >Page {currentPage} / {pages}</button>
+                <button className="btn btn-sm" onClick={getPageProductsHandler.bind(this, currentPage+1, pageSize)}>»</button>
+            </div>
         </div>
     );
 }
