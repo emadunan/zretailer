@@ -1,6 +1,11 @@
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 
-export const postProductsValidation = [
+export const getProducts = [
+    query("page").isNumeric(),
+    query("size").isNumeric(),
+];
+
+export const postProducts = [
     body("title").isString(),
     body("category").isString(),
     body("desc").isString().optional(),
