@@ -14,7 +14,6 @@ function AdminProducts() {
         pageSize: number;
     };
     const dispatch = useDispatch();
-
     dispatch(showProducts(loaderData));
 
     return (
