@@ -61,7 +61,10 @@ function AdminProducts() {
     );
 
     useEffect(() => {
-        productDispatch({ type: ProductActions.RENDER_PRODUCTS, payload: loaderData });
+        productDispatch({
+            type: ProductActions.RENDER_PRODUCTS,
+            payload: loaderData,
+        });
     }, [loaderData.products]);
 
     async function getPageProductsHandler(page = 1, size = 4) {
