@@ -4,7 +4,7 @@ import { getProducts, addProduct } from "../api/products";
 import Product from "../interfaces/Product";
 import ProductsTbl from "../components/Product/ProductsTbl";
 import ProductForm from "../components/Product/ProductForm";
-import { useEffect, useReducer } from "react";
+import { FC, useEffect, useReducer } from "react";
 
 // Products Reducer Setup
 enum ProductActions {
@@ -47,7 +47,7 @@ function productsReducer(state: ProductState, action: RenderProductsAction) {
     }
 }
 
-function AdminProducts() {
+const AdminProducts: FC = () => {
     // Loading data at component intiation by React Router
     const loaderData = useLoaderData() as {
         products: Product[];
@@ -92,7 +92,7 @@ function AdminProducts() {
                 products={productState.products}
                 pages={productState.pages}
                 pageSize={productState.pageSize}
-                currentPage={productState.currentPage}
+                currentPage={productState.currentPage!}
                 onGetPageProducts={getPageProductsHandler}
             />
         </div>

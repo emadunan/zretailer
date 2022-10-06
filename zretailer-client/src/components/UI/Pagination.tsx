@@ -1,6 +1,12 @@
+import { FC } from "react";
 import { arrayFromNumbr } from "../../utils/main";
 
-function Pagination(props: any) {
+const Pagination: FC<{
+    currentPage: number;
+    pageSize: number;
+    pages: number;
+    onGetPageProducts: (a: number, b: number) => void;
+}> = (props) => {
     return (
         <div className="flex items-center justify-between mt-4">
             <select
@@ -62,6 +68,6 @@ function Pagination(props: any) {
             </select>
         </div>
     );
-}
+};
 
 export default Pagination;

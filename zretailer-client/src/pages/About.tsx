@@ -1,6 +1,7 @@
+import { FC } from "react";
 import { Link } from "react-router-dom";
 
-function About() {
+const About: FC = () => {
     return (
         <>
             <main>

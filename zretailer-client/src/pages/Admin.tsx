@@ -1,6 +1,7 @@
+import { FC } from "react";
 import { Outlet } from "react-router-dom";
 
-function Admin() {
+const Admin: FC = () => {
     return <Outlet />;
 }
 

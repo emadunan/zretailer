@@ -1,6 +1,14 @@
-import PropTypes, { InferProps } from "prop-types";
+import { FC } from "react";
 
-function ProductRow(props: InferProps<typeof ProductRow.propTypes>) {
+const ProductRow: FC<{
+    idx: number;
+    title: string;
+    category: string;
+    pkgCap: number;
+    pkgPriceBuy: number;
+    pkgPriceSell: number;
+    unitPrice: number;
+}> = (props) => {
     return (
         <tr>
             <th>{props.idx}</th>
@@ -16,17 +24,6 @@ function ProductRow(props: InferProps<typeof ProductRow.propTypes>) {
             </td>
         </tr>
     );
-}
-
-ProductRow.propTypes = {
-    idx: PropTypes.number,
-    title: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    desc: PropTypes.string,
-    pkgCap: PropTypes.number.isRequired,
-    pkgPriceBuy: PropTypes.number.isRequired,
-    pkgPriceSell: PropTypes.number.isRequired,
-    unitPrice: PropTypes.number.isRequired,
 };
 
 export default ProductRow;

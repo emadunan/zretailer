@@ -1,8 +1,8 @@
-import { Fragment } from "react";
+import { FC, Fragment } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
-function Layout() {
+const Layout: FC = () => {
     return (
         <Fragment>
             <Navbar />

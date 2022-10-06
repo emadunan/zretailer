@@ -1,8 +1,9 @@
+import { FC } from "react";
 import { Link } from "react-router-dom";
 
 import UserDropdown from "../components/User/UserDropdown";
 
-function Navbar() {
+const Navbar: FC = () => {
     return (
         <div className="navbar bg-base-100">
             <div className="navbar-start">

@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { FC, useEffect, useReducer } from "react";
 import { Form } from "react-router-dom";
 
 const validationReducer = (state: any, action: any) => {
@@ -52,7 +52,7 @@ const initialState = {
     formIsValid: false,
 };
 
-function ProductForm() {
+const ProductForm: FC = () => {
     const [state, dispatcher] = useReducer(validationReducer, initialState);
 
     const validateNameHandler = (event: any) => {
@@ -164,6 +164,6 @@ function ProductForm() {
             </button>
         </Form>
     );
-}
+};
 
 export default ProductForm;

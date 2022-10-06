@@ -1,12 +1,16 @@
-import { Fragment } from "react";
+import { FC, Fragment } from "react";
 import ProductRow from "./ProductRow";
 import Product from "../../interfaces/Product";
 
 import Pagination from "../UI/Pagination";
 
-function ProductsTbl(props: any) {
-    const { products, pages, pageSize, currentPage } = props;
-
+const ProductsTbl: FC<{
+    products: Product[];
+    pages: number;
+    pageSize: number;
+    currentPage: number;
+    onGetPageProducts: () => void;
+}> = ({ products, pages, pageSize, currentPage, onGetPageProducts }) => {
     return (
         <Fragment>
             <div className="overflow-x-auto">
@@ -45,10 +49,10 @@ function ProductsTbl(props: any) {
                 currentPage={currentPage}
                 pageSize={pageSize}
                 pages={pages}
-                onGetPageProducts={props.onGetPageProducts}
+                onGetPageProducts={onGetPageProducts}
             />
         </Fragment>
     );
-}
+};
 
 export default ProductsTbl;
