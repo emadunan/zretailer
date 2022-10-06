@@ -1,12 +1,12 @@
+import { Fragment } from "react";
 import ProductRow from "./ProductRow";
 import Product from "../../interfaces/Product";
-import { Fragment } from "react";
 
 import Pagination from "../UI/Pagination";
 
 function ProductsTbl(props: any) {
     const { products, pages, pageSize, currentPage } = props;
-    
+
     return (
         <Fragment>
             <div className="overflow-x-auto">
