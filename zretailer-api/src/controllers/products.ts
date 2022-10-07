@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { validationResult } from "express-validator";
-import { createProduct, findProducts } from "../handlers/products";
+import {
+    createProduct,
+    findProducts,
+    getProductTitles,
+} from "../handlers/products";
 
 import * as Validations from "../validations/products";
 
@@ -26,6 +30,18 @@ router.get(
             // Fetch data from database and return it in reponse body
             const paginatedProducts = await findProducts(pageNumbr, pageSize);
             res.json(paginatedProducts);
+        } catch (error) {
+            next();
+        }
+    }
+);
+
+router.get(
+    "/product-titles",
+    async (_req: Request, res: Response, next: NextFunction) => {
+        try {
+            const productTitles = await getProductTitles();
+            res.json(productTitles);
         } catch (error) {
             next();
         }

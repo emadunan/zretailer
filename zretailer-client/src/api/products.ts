@@ -14,6 +14,15 @@ export async function getProducts(
     return response.json();
 }
 
+export async function getProductTitles(): Promise<
+    { id: number; title: string }[]
+> {
+    const response = await fetch(`${apiUrl}/product-titles`);
+
+    if (!response.ok) throw new Error("Failed to get products!");
+    return response.json();
+}
+
 export async function addProduct(product: Product) {
     const response = await fetch(`${apiUrl}/products`, {
         method: "POST",

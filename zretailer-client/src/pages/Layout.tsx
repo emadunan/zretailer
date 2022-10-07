@@ -11,6 +11,6 @@ const Layout: FC = () => {
             </main>
         </Fragment>
     );
-}
+};
 
 export default Layout;

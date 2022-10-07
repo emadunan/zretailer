@@ -104,6 +104,6 @@ const Navbar: FC = () => {
             </div>
         </div>
     );
-}
+};
 
 export default Navbar;

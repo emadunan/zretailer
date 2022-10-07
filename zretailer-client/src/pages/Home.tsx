@@ -13,6 +13,6 @@ const Home: FC = () => {
             ))}
         </Fragment>
     );
-}
+};
 
 export default Home;

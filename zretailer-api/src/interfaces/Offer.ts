@@ -1,4 +1,3 @@
-
 export interface OfferToCreate {
     percent: number;
     fromDate: Date;

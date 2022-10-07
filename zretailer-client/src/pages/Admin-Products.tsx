@@ -97,7 +97,7 @@ const AdminProducts: FC = () => {
             />
         </div>
     );
-}
+};
 
 export default AdminProducts;
 

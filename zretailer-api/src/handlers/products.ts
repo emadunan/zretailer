@@ -20,3 +20,12 @@ export async function findProducts(pageNumbr: number, pageSize: number) {
 
     return { pageSize, pages, products };
 }
+
+export async function getProductTitles() {
+    return await prisma.product.findMany({
+        select: {
+            id: true,
+            title: true,
+        },
+    });
+}

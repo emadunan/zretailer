@@ -15,6 +15,6 @@ const About: FC = () => {
             </nav>
         </>
     );
-}
+};
 
 export default About;

@@ -9,6 +9,6 @@ const ErrorPage: FC = () => {
             <p>{error.message}</p>
         </>
     );
-}
+};
 
 export default ErrorPage;
