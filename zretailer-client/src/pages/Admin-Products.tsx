@@ -1,7 +1,7 @@
 import { FC, useEffect, useReducer } from "react";
 import { Link, Outlet, useLoaderData, useLocation } from "react-router-dom";
 
-import Product from "../interfaces/Product";
+import { Product } from "../interfaces/Product";
 import ProductsTbl from "../components/Product/ProductsTbl";
 import { getProducts, addProduct } from "../api/products";
 

@@ -1,4 +1,4 @@
-import Product from "../interfaces/Product";
+import { Product } from "../interfaces/Product";
 
 const { REACT_APP_API_URL: apiUrl } = process.env;
 
@@ -11,7 +11,7 @@ export async function getProducts(
     );
 
     if (!response.ok) throw new Error("Failed to get products!");
-    return response.json();
+    return await response.json();
 }
 
 export async function getProductTitles(): Promise<
@@ -20,7 +20,7 @@ export async function getProductTitles(): Promise<
     const response = await fetch(`${apiUrl}/product-titles`);
 
     if (!response.ok) throw new Error("Failed to get products!");
-    return response.json();
+    return await response.json();
 }
 
 export async function addProduct(product: Product) {
@@ -33,5 +33,5 @@ export async function addProduct(product: Product) {
     });
 
     if (!response.ok) throw new Error("Failed to add product");
-    return response.json();
+    return await response.json();
 }

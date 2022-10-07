@@ -1,7 +1,7 @@
 import { FC, Fragment } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../context/store";
-import Product from "../interfaces/Product";
+import { Product } from "../interfaces/Product";
 
 const Home: FC = () => {
     const products = useSelector((state: RootState) => state.product.products);

@@ -1,8 +1,50 @@
-import { FC, ChangeEvent, useEffect, useState } from "react";
+import { FC, ChangeEvent, useEffect, useState, useReducer } from "react";
 
+import { addOffer } from "../api/offers";
 import { getProductTitles } from "../api/products";
+import { Product } from "../interfaces/Product";
+
+// Offer Reducer
+enum OfferActions {
+    ADD_OFFER = "ADD_OFFER",
+}
+
+interface OfferState {
+    offer: {
+        id: number;
+        fromDate: Date;
+        untilDate: Date;
+        percent: number;
+        products: Product[];
+    };
+}
+
+function offerReducer(state: any, action: any) {
+    const { type, payload } = action;
+
+    switch (type) {
+        case OfferActions.ADD_OFFER: {
+            return state;
+        }
+
+        default:
+            return state;
+    }
+}
+
+const inititalState = {
+    offer: {
+        id: 1,
+        fromDate: new Date("2022-10-7"),
+        untilDate: new Date("2022-10-9"),
+        percent: 12,
+        products: [],
+    },
+};
 
 const AdminOffers: FC = () => {
+    const [offerState, dispatchOffer] = useReducer(offerReducer, inititalState);
+
     const [productTitles, setProductTitles] = useState<
         { id: number; title: string }[]
     >([]);
@@ -50,29 +92,26 @@ const AdminOffers: FC = () => {
 
     return (
         <div>
-            <h1>Admin Offers Component</h1>
-            <form className="flex flex-col">
-                <div className="my-4">
+            <h1 className="text-center font-bold">Add New Offer From Here!</h1>
+            <form className="flex flex-col justify-center items-center">
+                <div className="my-4 flex flex-row justify-center flex-wrap">
                     <input
                         type="date"
                         placeholder="Type here"
-                        className="input input-bordered w-full max-w-xs mx-2 my-1"
+                        className="input input-bordered w-full max-w-xs min-w-min m-1"
                     />
                     <input
                         type="date"
                         placeholder="Type here"
-                        className="input input-bordered w-full max-w-xs mx-2 my-1"
+                        className="input input-bordered w-full max-w-xs min-w-min m-1"
                     />
-                </div>
-
-                <div className="my-4">
                     <input
-                        type="text"
-                        placeholder="Type here"
-                        className="input input-bordered w-full max-w-xs mx-2 my-1"
+                        type="number"
+                        placeholder="Offer Percent %"
+                        className="input input-bordered w-full max-w-xs m-1"
                     />
                     <select
-                        className="select select-bordered w-full max-w-xs mx-2 my-1"
+                        className="select select-bordered w-full max-w-xs m-1"
                         defaultValue="products"
                         onChange={productSelectChangeHandler}
                     >
@@ -89,20 +128,22 @@ const AdminOffers: FC = () => {
                             </option>
                         ))}
                     </select>
+
                     <button
-                        className="btn btn-outline mx-2"
+                        className="btn btn-outline m-1"
                         type="button"
                         onClick={addProductTofferHandler}
                     >
-                        Button
+                        Add Product To The Offer
                     </button>
                 </div>
 
-                <div className="my-4">
+                <div className="my-4 flex items-start justify-start"></div>
+                <div className="mt-4">
                     {selectedProducts.map((prod) => (
                         <button
                             type="button"
-                            className="btn btn-accent mx-2 my-1"
+                            className="btn btn-accent"
                             key={prod.id}
                             data-product={prod.id}
                         >
@@ -110,7 +151,40 @@ const AdminOffers: FC = () => {
                         </button>
                     ))}
                 </div>
+                <button className="btn">Add Offer</button>
             </form>
+            <div className="overflow-x-auto mt-8">
+                <table className="table w-full">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Job</th>
+                            <th>Favorite Color</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>1</th>
+                            <td>Cy Ganderton</td>
+                            <td>Quality Control Specialist</td>
+                            <td>Blue</td>
+                        </tr>
+                        <tr>
+                            <th>2</th>
+                            <td>Hart Hagerty</td>
+                            <td>Desktop Support Technician</td>
+                            <td>Purple</td>
+                        </tr>
+                        <tr>
+                            <th>3</th>
+                            <td>Brice Swyre</td>
+                            <td>Tax Accountant</td>
+                            <td>Red</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

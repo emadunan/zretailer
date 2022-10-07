@@ -1,6 +1,6 @@
 import { FC, Fragment } from "react";
 import ProductRow from "./ProductRow";
-import Product from "../../interfaces/Product";
+import { Product } from "../../interfaces/Product";
 
 import Pagination from "../UI/Pagination";
 
