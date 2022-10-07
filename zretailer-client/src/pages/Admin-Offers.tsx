@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, ChangeEvent, useEffect, useState } from "react";
 
 import { getProductTitles } from "../api/products";
 
@@ -28,14 +28,16 @@ const AdminOffers: FC = () => {
             const isAlreadySelected = selectedProducts.find(
                 (prod) => prod.id === selectedProduct?.id
             );
-            if (!isAlreadySelected) {
-                return [...prevState, selectedProduct!];
+
+            if (!isAlreadySelected && selectedProduct) {
+                return [...prevState, selectedProduct];
             }
+
             return prevState;
         });
     }
 
-    function productSelectChangeHandler(event: any) {
+    function productSelectChangeHandler(event: ChangeEvent<HTMLSelectElement>) {
         const productId = +event.target.value;
         const productTitle = productTitles.find(
             (prod) => prod.id === productId

@@ -1,37 +1,64 @@
-import { FC, useEffect, useReducer } from "react";
+import { FC, ChangeEvent, useEffect, useReducer } from "react";
 import { Form } from "react-router-dom";
 
-const validationReducer = (state: any, action: any) => {
-    switch (action.type) {
-        case "VALIDATE_NAME": {
+// Validation Reducer Setup
+enum ValidationActions {
+    VALIDATE_NAME = "VALIDATE_NAME",
+    VALIDATE_CATEGORY = "VALIDATE_CATEGORY",
+    TOUCH_NAME = "TOUCH_NAME",
+    TOUCH_CATEGORY = "TOUCH_CATEGORY",
+    VALIDATE_FROM = "VALIDATE_FROM",
+}
+
+interface ValidationState {
+    nameIsValid: boolean | null;
+    nameIsTouched: boolean;
+    categoryIsValid: boolean | null;
+    categoryIsTouched: boolean;
+    formIsValid: boolean;
+}
+
+interface ValidationAction {
+    type: string;
+    payload?: boolean;
+}
+
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+const validationReducer = (
+    state: ValidationState | any,
+    action: ValidationAction
+) => {
+    const { type, payload } = action;
+    switch (type) {
+        case ValidationActions.VALIDATE_NAME: {
             return {
                 ...state,
-                nameIsValid: action.payload.name.length > 3,
+                nameIsValid: payload,
             };
         }
 
-        case "VALIDATE_CATEGORY": {
+        case ValidationActions.VALIDATE_CATEGORY: {
             return {
                 ...state,
-                categoryIsValid: action.payload.category.length > 4,
+                categoryIsValid: payload,
             };
         }
 
-        case "TOUCH_NAME": {
+        case ValidationActions.TOUCH_NAME: {
             return {
                 ...state,
-                nameIsTouched: action.payload.nameIsTouched,
+                nameIsTouched: payload,
             };
         }
 
-        case "TOUCH_CATEGORY": {
+        case ValidationActions.TOUCH_CATEGORY: {
             return {
                 ...state,
-                categoryIsTouched: action.payload.categoryIsTouched,
+                categoryIsTouched: payload,
             };
         }
 
-        case "VALIDATE_FROM": {
+        case ValidationActions.VALIDATE_FROM: {
             const isValid = state.nameIsValid && state.categoryIsValid;
             return {
                 ...state,
@@ -44,7 +71,7 @@ const validationReducer = (state: any, action: any) => {
     }
 };
 
-const initialState = {
+const initialState: ValidationState = {
     nameIsValid: null,
     nameIsTouched: false,
     categoryIsValid: null,
@@ -53,16 +80,25 @@ const initialState = {
 };
 
 const ProductForm: FC = () => {
-    const [state, dispatcher] = useReducer(validationReducer, initialState);
+    const [validationState, dispatchValidation] = useReducer(
+        validationReducer,
+        initialState
+    );
 
-    const validateNameHandler = (event: any) => {
+    const validateNameHandler = (event: ChangeEvent<HTMLInputElement>) => {
         const name = event.target.value;
-        dispatcher({ type: "VALIDATE_NAME", payload: { name } });
+        dispatchValidation({
+            type: ValidationActions.VALIDATE_NAME,
+            payload: name.length > 3,
+        });
     };
 
-    const validateCategoryHandler = (event: any) => {
+    const validateCategoryHandler = (event: ChangeEvent<HTMLSelectElement>) => {
         const category = event.target.value;
-        dispatcher({ type: "VALIDATE_CATEGORY", payload: { category } });
+        dispatchValidation({
+            type: ValidationActions.VALIDATE_CATEGORY,
+            payload: category.length > 4,
+        });
     };
 
     const {
@@ -71,10 +107,10 @@ const ProductForm: FC = () => {
         nameIsTouched,
         categoryIsValid,
         categoryIsTouched,
-    } = state;
+    } = validationState;
 
     useEffect(() => {
-        dispatcher({ type: "VALIDATE_FROM" });
+        dispatchValidation({ type: ValidationActions.VALIDATE_FROM });
     }, [nameIsValid, categoryIsValid]);
 
     return (
@@ -91,9 +127,9 @@ const ProductForm: FC = () => {
                 name="name"
                 onChange={validateNameHandler}
                 onFocus={() =>
-                    dispatcher({
-                        type: "TOUCH_NAME",
-                        payload: { nameIsTouched: true },
+                    dispatchValidation({
+                        type: ValidationActions.TOUCH_NAME,
+                        payload: true,
                     })
                 }
             />
@@ -108,9 +144,9 @@ const ProductForm: FC = () => {
                 defaultValue="category"
                 onChange={validateCategoryHandler}
                 onFocus={() =>
-                    dispatcher({
-                        type: "TOUCH_CATEGORY",
-                        payload: { categoryIsTouched: true },
+                    dispatchValidation({
+                        type: ValidationActions.TOUCH_CATEGORY,
+                        payload: true,
                     })
                 }
             >

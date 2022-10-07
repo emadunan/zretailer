@@ -1,10 +1,9 @@
-import { useLoaderData } from "react-router-dom";
+import { FC, useEffect, useReducer } from "react";
+import { Link, Outlet, useLoaderData, useLocation } from "react-router-dom";
 
-import { getProducts, addProduct } from "../api/products";
 import Product from "../interfaces/Product";
 import ProductsTbl from "../components/Product/ProductsTbl";
-import ProductForm from "../components/Product/ProductForm";
-import { FC, useEffect, useReducer } from "react";
+import { getProducts, addProduct } from "../api/products";
 
 // Products Reducer Setup
 enum ProductActions {
@@ -55,13 +54,16 @@ const AdminProducts: FC = () => {
         pageSize: number;
     };
 
-    const [productState, productDispatch] = useReducer(
+    const location = useLocation();
+    const isRegisterForm = location.pathname.includes("register");
+
+    const [productState, dispatchProduct] = useReducer(
         productsReducer,
         initialState
     );
 
     useEffect(() => {
-        productDispatch({
+        dispatchProduct({
             type: ProductActions.RENDER_PRODUCTS,
             payload: loaderData,
         });
@@ -73,7 +75,7 @@ const AdminProducts: FC = () => {
 
         // Get products and persist it in product state
         const data = await getProducts(page, size);
-        productDispatch({
+        dispatchProduct({
             type: ProductActions.RENDER_PRODUCTS,
             payload: { ...data, currentPage: page },
         });
@@ -87,11 +89,26 @@ const AdminProducts: FC = () => {
                 a loader function and make a post request through an action
                 function
             </p>
-            <ProductForm />
+
+            <div className="my-6 flex flex-row items-center justify-center">
+                {!isRegisterForm && (
+                    <Link to="register" className="link link-primary">
+                        Register New Product
+                    </Link>
+                )}
+                {isRegisterForm && (
+                    <Link to="" className="link link-primary">
+                        Hide Registeration Form
+                    </Link>
+                )}
+            </div>
+
+            <Outlet />
             <ProductsTbl
                 products={productState.products}
                 pages={productState.pages}
                 pageSize={productState.pageSize}
+                /* eslint-disable  @typescript-eslint/no-non-null-assertion */
                 currentPage={productState.currentPage!}
                 onGetPageProducts={getPageProductsHandler}
             />
@@ -115,6 +132,7 @@ export async function loader(): Promise<{
     }
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export async function action({ request }: any) {
     const formData = await request.formData();
 

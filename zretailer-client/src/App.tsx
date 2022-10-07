@@ -18,6 +18,7 @@ import AdminProducts, {
 import AdminOffers from "./pages/Admin-Offers";
 import NotFound from "./pages/Not-Found";
 import ErrorPage from "./pages/ErrorPage";
+import ProductForm from "./components/Product/ProductForm";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -33,7 +34,9 @@ const router = createBrowserRouter(
                     loader={adminProductsLoader}
                     errorElement={<ErrorPage />}
                     action={addProductAction}
-                />
+                >
+                    <Route path="register" element={<ProductForm />} />
+                </Route>
                 <Route path="offers" element={<AdminOffers />} />
             </Route>
             <Route path="*" element={<NotFound />} />
