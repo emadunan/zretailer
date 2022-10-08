@@ -3,6 +3,7 @@ import { FC, ChangeEvent, useEffect, useState, useReducer } from "react";
 import { addOffer } from "../api/offers";
 import { getProductTitles } from "../api/products";
 import { Product } from "../interfaces/Product";
+import { Offer } from "../interfaces/Offer";
 
 // Offer Reducer
 enum OfferActions {
@@ -10,13 +11,15 @@ enum OfferActions {
 }
 
 interface OfferState {
-    offer: {
-        id: number;
-        fromDate: Date;
-        untilDate: Date;
-        percent: number;
-        products: Product[];
-    };
+    offers: [
+        {
+            id: number;
+            fromDate: Date;
+            untilDate: Date;
+            percent: number;
+            products: Product[];
+        }
+    ];
 }
 
 function offerReducer(state: any, action: any) {
@@ -33,13 +36,15 @@ function offerReducer(state: any, action: any) {
 }
 
 const inititalState = {
-    offer: {
-        id: 1,
-        fromDate: new Date("2022-10-7"),
-        untilDate: new Date("2022-10-9"),
-        percent: 12,
-        products: [],
-    },
+    offers: [
+        {
+            id: 1,
+            fromDate: new Date("2022-10-7"),
+            untilDate: new Date("2022-10-9"),
+            percent: 12,
+            products: [],
+        }
+    ]
 };
 
 const AdminOffers: FC = () => {
@@ -158,30 +163,24 @@ const AdminOffers: FC = () => {
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Name</th>
-                            <th>Job</th>
-                            <th>Favorite Color</th>
+                            <th>Percent</th>
+                            <th>From</th>
+                            <th>Until</th>
+                            <th>Products</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th>1</th>
-                            <td>Cy Ganderton</td>
-                            <td>Quality Control Specialist</td>
-                            <td>Blue</td>
-                        </tr>
-                        <tr>
-                            <th>2</th>
-                            <td>Hart Hagerty</td>
-                            <td>Desktop Support Technician</td>
-                            <td>Purple</td>
-                        </tr>
-                        <tr>
-                            <th>3</th>
-                            <td>Brice Swyre</td>
-                            <td>Tax Accountant</td>
-                            <td>Red</td>
-                        </tr>
+                        {offerState.offers.map((offer: Offer) => {
+                            return (
+                                <tr key={offer.id}>
+                                    <th>1</th>
+                                    <td>{offer.percent} %</td>
+                                    <td>{offer.fromDate.toISOString()}</td>
+                                    <td>{offer.untilDate.toISOString()}</td>
+                                    <td></td>
+                                </tr>
+                            )
+                        })}
                     </tbody>
                 </table>
             </div>
