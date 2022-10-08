@@ -10,6 +10,13 @@ enum ValidationActions {
     VALIDATE_FROM = "VALIDATE_FROM",
 }
 
+type ValidationAction =
+    | { type: ValidationActions.VALIDATE_FROM }
+    | { type: ValidationActions.VALIDATE_NAME; payload: boolean | null }
+    | { type: ValidationActions.VALIDATE_CATEGORY; payload: boolean | null }
+    | { type: ValidationActions.TOUCH_NAME; payload: boolean }
+    | { type: ValidationActions.TOUCH_CATEGORY; payload: boolean }
+
 interface ValidationState {
     nameIsValid: boolean | null;
     nameIsTouched: boolean;
@@ -18,43 +25,34 @@ interface ValidationState {
     formIsValid: boolean;
 }
 
-interface ValidationAction {
-    type: string;
-    payload?: boolean;
-}
-
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-const validationReducer = (
-    state: ValidationState | any,
-    action: ValidationAction
-) => {
-    const { type, payload } = action;
-    switch (type) {
+function validationReducer(state: ValidationState|any, action: ValidationAction) {
+    switch (action.type) {
         case ValidationActions.VALIDATE_NAME: {
             return {
                 ...state,
-                nameIsValid: payload,
+                nameIsValid: action.payload,
             };
         }
 
         case ValidationActions.VALIDATE_CATEGORY: {
             return {
                 ...state,
-                categoryIsValid: payload,
+                categoryIsValid: action.payload,
             };
         }
 
         case ValidationActions.TOUCH_NAME: {
             return {
                 ...state,
-                nameIsTouched: payload,
+                nameIsTouched: action.payload,
             };
         }
 
         case ValidationActions.TOUCH_CATEGORY: {
             return {
                 ...state,
-                categoryIsTouched: payload,
+                categoryIsTouched: action.payload,
             };
         }
 
@@ -69,7 +67,7 @@ const validationReducer = (
         default:
             return state;
     }
-};
+}
 
 const initialState: ValidationState = {
     nameIsValid: null,

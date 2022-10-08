@@ -22,7 +22,7 @@ type OfferAction =
     | { type: OfferActions.CHANGE_UNTIL_DATE; payload: Date }
     | { type: OfferActions.CHANGE_PERCENT; payload: number }
     | { type: OfferActions.ADD_PROD_TO_OFFER; payload: ProductTitle }
-    | { type: OfferActions.ADD_OFFER; payload: Offer };
+    | { type: OfferActions.ADD_OFFER; payload: Offer }
 //  | { type: 'reset' };
 
 // REFACTOR: It's recommended to separate offers from the form state for performance wise
