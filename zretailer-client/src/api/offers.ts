@@ -9,7 +9,7 @@ export async function getAllOffers() {
     return await response.json();
 }
 
-export async function addOffer(offer: Offer) {
+export async function addOffer(offer: Partial<Offer>) {
     const response = await fetch(`${apiUrl}/offers`, {
         method: "POST",
         headers: {

@@ -10,6 +10,6 @@ export interface Product {
 }
 
 export interface ProductTitle {
-    id: string;
+    id: number;
     title: string;
 }
