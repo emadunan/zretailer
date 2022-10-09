@@ -1,14 +1,14 @@
 import { FC, ChangeEvent, useEffect, useState, useReducer } from "react";
 import { cloneDeep } from "lodash";
 
-import { addOffer } from "../api/offers";
+import { addOffer, getAllOffers } from "../api/offers";
 import { getProductTitles } from "../api/products";
 import { ProductTitle } from "../interfaces/Product";
 import { Offer } from "../interfaces/Offer";
 
 // Offer Reducer
 enum OfferActions {
-    GET_OFFERS = "GET_OFFERS",
+    LOAD_OFFERS = "LOAD_OFFERS",
     ADD_OFFER = "ADD_OFFER",
     ADD_PROD_TO_OFFER = "ADD_PROD_TO_OFFER",
     CHANGE_FROM_DATE = "CHANGE_FROM_DATE",
@@ -17,9 +17,9 @@ enum OfferActions {
 }
 
 type OfferAction =
-    | { type: OfferActions.GET_OFFERS }
-    | { type: OfferActions.CHANGE_FROM_DATE; payload: Date }
-    | { type: OfferActions.CHANGE_UNTIL_DATE; payload: Date }
+    | { type: OfferActions.LOAD_OFFERS, payload: Array<Offer> }
+    | { type: OfferActions.CHANGE_FROM_DATE; payload: Date | null }
+    | { type: OfferActions.CHANGE_UNTIL_DATE; payload: Date | null }
     | { type: OfferActions.CHANGE_PERCENT; payload: number }
     | { type: OfferActions.ADD_PROD_TO_OFFER; payload: ProductTitle }
     | { type: OfferActions.ADD_OFFER; payload: Offer }
@@ -28,9 +28,9 @@ type OfferAction =
 // REFACTOR: It's recommended to separate offers from the form state for performance wise
 interface OfferState {
     offers: Offer[];
-    fromDateEntry: Date;
+    fromDateEntry: Date | null;
     fromDateIsValid: boolean | null;
-    untilDateEntry: Date;
+    untilDateEntry: Date | null;
     untilDateIsValid: boolean | null;
     percentEntry: number;
     percentIsValid: boolean | null;
@@ -41,12 +41,15 @@ interface OfferState {
 
 function offerReducer(state: OfferState, action: OfferAction) {
     switch (action.type) {
-        case OfferActions.GET_OFFERS: {
-            return state;
+        case OfferActions.LOAD_OFFERS: {
+            const offers = action.payload;
+            return {
+                ...state, offers
+            };
         }
         case OfferActions.ADD_OFFER: {
             const stateCopy = cloneDeep(state);
-            stateCopy.offers.push(action.payload);
+            stateCopy.offers.unshift(action.payload);
 
             return stateCopy;
         }
@@ -118,6 +121,13 @@ const AdminOffers: FC = () => {
             const productTitlesData = await getProductTitles();
             setProductTitles(productTitlesData);
         })();
+
+        (async () => {
+            const offersData = await getAllOffers();
+            console.log(offersData);
+
+            dispatchOffer({ type: OfferActions.LOAD_OFFERS, payload: offersData });
+        })()
     }, []);
 
     function productSelectChangeHandler(event: ChangeEvent<HTMLSelectElement>) {
@@ -153,7 +163,7 @@ const AdminOffers: FC = () => {
         const fromDate = event.target.value;
         dispatchOffer({
             type: OfferActions.CHANGE_FROM_DATE,
-            payload: new Date(fromDate),
+            payload: fromDate ? new Date(fromDate) : null,
         });
     }
 
@@ -161,7 +171,7 @@ const AdminOffers: FC = () => {
         const untilDate = event.target.value;
         dispatchOffer({
             type: OfferActions.CHANGE_UNTIL_DATE,
-            payload: new Date(untilDate),
+            payload: untilDate ? new Date(untilDate) : null,
         });
     }
 
@@ -174,7 +184,7 @@ const AdminOffers: FC = () => {
         event.preventDefault();
         console.log(offerState);
 
-        const offerToCreate: Partial<Offer> = {
+        const offerToCreate: any = {
             percent: offerState.percentEntry,
             fromDate: offerState.fromDateEntry,
             untilDate: offerState.untilDateEntry,
@@ -187,6 +197,9 @@ const AdminOffers: FC = () => {
 
         // Update offer state
         dispatchOffer({ type: OfferActions.ADD_OFFER, payload: offer });
+        // offerState.fromDateEntry = null;
+        // offerState.untilDateEntry = null;
+        offerState.percentEntry = 0;
     }
 
     return (
@@ -202,18 +215,21 @@ const AdminOffers: FC = () => {
                         placeholder="From date"
                         className="input input-bordered w-full max-w-xs min-w-min m-1"
                         onChange={fromDateChangeHandler}
+                        value={offerState.fromDateEntry?.toLocaleDateString("en-CA")}
                     />
                     <input
                         type="date"
                         placeholder="Until Date"
                         className="input input-bordered w-full max-w-xs min-w-min m-1"
                         onChange={untilDateChangeHandler}
+                        value={offerState.untilDateEntry?.toLocaleDateString("en-CA")}
                     />
                     <input
                         type="number"
                         placeholder="Offer Percent %"
                         className="input input-bordered w-full max-w-xs m-1"
                         onChange={percentChangeHandler}
+                        value={offerState.percentEntry}
                     />
                     <select
                         className="select select-bordered w-full max-w-xs m-1"
@@ -243,12 +259,11 @@ const AdminOffers: FC = () => {
                     </button>
                 </div>
 
-                <div className="my-4 flex items-start justify-start"></div>
-                <div className="mt-4">
+                <div className="mt-2">
                     {selectedProducts.map((prod) => (
                         <button
                             type="button"
-                            className="btn btn-accent"
+                            className="btn btn-accent m-1"
                             key={prod.id}
                             data-product={prod.id}
                         >
@@ -256,7 +271,8 @@ const AdminOffers: FC = () => {
                         </button>
                     ))}
                 </div>
-                <button type="submit" className="btn">
+                <div className="divider"></div>
+                <button type="submit" className="btn mt-4">
                     Add Offer
                 </button>
             </form>

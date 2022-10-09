@@ -3,7 +3,7 @@ import { Offer } from "../interfaces/Offer";
 const { REACT_APP_API_URL: apiUrl } = process.env;
 
 export async function getAllOffers() {
-    const response = await fetch("");
+    const response = await fetch(`${apiUrl}/offers`);
 
     if (!response.ok) throw new Error("Failed to get offers!");
     return await response.json();

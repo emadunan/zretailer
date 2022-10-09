@@ -1,11 +1,21 @@
 import { Product } from "@prisma/client";
 import { NextFunction, Request, Response, Router } from "express";
 import { validationResult } from "express-validator";
-import { createOffer } from "../handlers/offers";
+import { createOffer, getAllOffers } from "../handlers/offers";
 import { OfferToCreate } from "../interfaces/Offer";
 import * as Validations from "../validations/offers";
 
 const router = Router();
+
+// Fetch all offers
+router.get("/offers", async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+        const offers = await getAllOffers();
+        res.json(offers);
+    } catch (error) {
+        next();
+    }
+});
 
 // Create offer
 router.post(
