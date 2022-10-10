@@ -14,15 +14,19 @@ enum OfferActions {
     CHANGE_UNTIL_DATE = "CHANGE_UNTIL_DATE",
     CHANGE_PERCENT = "CHANGE_PERCENT",
     FOCUS_PERCENT = "FOCUS_PERCENT",
+    VALIDATE_FORM = "VALIDATE_FORM",
+    RESET_FORM = "RESET_FORM",
 }
 
 type OfferAction =
-    | { type: OfferActions.FOCUS_FROM_DATE }
-    | { type: OfferActions.FOCUS_PERCENT }
+    | { type: OfferActions.FOCUS_FROM_DATE; payload: boolean }
+    | { type: OfferActions.FOCUS_PERCENT; payload: boolean }
     | { type: OfferActions.CHANGE_FROM_DATE; payload: string }
     | { type: OfferActions.CHANGE_UNTIL_DATE; payload: string }
     | { type: OfferActions.CHANGE_PERCENT; payload: number }
-    | { type: OfferActions.ADD_PROD_TO_OFFER; payload: ProductTitle };
+    | { type: OfferActions.ADD_PROD_TO_OFFER; payload: ProductTitle }
+    | { type: OfferActions.VALIDATE_FORM }
+    | { type: OfferActions.RESET_FORM };
 
 // REFACTOR: It's recommended to separate offers from the form state for performance wise
 interface OfferState {
@@ -44,13 +48,14 @@ function offerReducer(state: OfferState, action: OfferAction) {
         case OfferActions.ADD_PROD_TO_OFFER: {
             const stateCopy = cloneDeep(state);
             stateCopy.productsEntry.push(action.payload);
+            state.productsIsValid = true;
 
             return stateCopy;
         }
 
         case OfferActions.FOCUS_FROM_DATE: {
             const stateCopy = cloneDeep(state);
-            stateCopy.fromDataIsTouched = true;
+            stateCopy.fromDataIsTouched = action.payload;
 
             return stateCopy;
         }
@@ -88,7 +93,7 @@ function offerReducer(state: OfferState, action: OfferAction) {
 
         case OfferActions.FOCUS_PERCENT: {
             const stateCopy = cloneDeep(state);
-            stateCopy.percentIsTouched = true;
+            stateCopy.percentIsTouched = action.payload;
 
             return stateCopy;
         }
@@ -100,6 +105,37 @@ function offerReducer(state: OfferState, action: OfferAction) {
             const stateCopy = cloneDeep(state);
             stateCopy.percentEntry = action.payload;
             stateCopy.percentIsValid = isBetween1and90;
+
+            return stateCopy;
+        }
+
+        case OfferActions.VALIDATE_FORM: {
+            const stateCopy = cloneDeep(state);
+
+            const {
+                percentIsValid,
+                fromDateIsValid,
+                untilDateIsValid,
+                productsIsValid,
+            } = state;
+            stateCopy.offersFormIsValid =
+                !!percentIsValid &&
+                !!fromDateIsValid &&
+                !!untilDateIsValid &&
+                !!productsIsValid;
+
+            return stateCopy;
+        }
+
+        case OfferActions.RESET_FORM: {
+            const stateCopy = cloneDeep(state);
+
+            stateCopy.fromDataIsTouched = false;
+            stateCopy.percentIsTouched = false;
+            stateCopy.fromDateEntry = "";
+            stateCopy.untilDateEntry = "";
+            stateCopy.percentEntry = 0;
+            stateCopy.productsEntry = [];
 
             return stateCopy;
         }
@@ -128,20 +164,35 @@ const AdminOffers: FC = () => {
     const [offerState, dispatchOffer] = useReducer(offerReducer, inititalState);
 
     const [productTitles, setProductTitles] = useState<ProductTitle[]>([]);
-    const [selectedProducts, setSelectedProducts] = useState<ProductTitle[]>([]);
-    const [selectedProduct, setSelectedProduct] = useState<ProductTitle>();
+    const [selectedProduct, setSelectedProduct] = useState<ProductTitle>({
+        id: -1,
+        title: "products",
+    });
 
     useEffect(() => {
         (async () => {
             const productTitlesData = await getProductTitles();
             setProductTitles(productTitlesData);
         })();
+    }, []);
 
+    useEffect(() => {
         (async () => {
             const offersData = await getAllOffers();
             setOffers(offersData);
         })();
     }, []);
+
+    const {
+        fromDateIsValid,
+        untilDateIsValid,
+        percentIsValid,
+        productsIsValid,
+    } = offerState;
+
+    useEffect(() => {
+        dispatchOffer({ type: OfferActions.VALIDATE_FORM });
+    }, [fromDateIsValid, untilDateIsValid, percentIsValid, productsIsValid]);
 
     function productSelectChangeHandler(event: ChangeEvent<HTMLSelectElement>) {
         const productId = +event.target.value;
@@ -155,15 +206,13 @@ const AdminOffers: FC = () => {
     }
 
     function addProductTofferHandler() {
-        const isAlreadySelected = selectedProducts.find(
+        const isAlreadySelected = offerState.productsEntry.find(
             (prod) => prod.id === selectedProduct?.id
         );
 
         if (isAlreadySelected || !selectedProduct) {
             return;
         }
-
-        setSelectedProducts((prevState) => [...prevState, selectedProduct]);
 
         dispatchOffer({
             type: OfferActions.ADD_PROD_TO_OFFER,
@@ -173,7 +222,7 @@ const AdminOffers: FC = () => {
 
     // Inputs change handlers
     function fromDateFocusHandler() {
-        dispatchOffer({ type: OfferActions.FOCUS_FROM_DATE });
+        dispatchOffer({ type: OfferActions.FOCUS_FROM_DATE, payload: true });
     }
 
     function fromDateChangeHandler(event: ChangeEvent<HTMLInputElement>) {
@@ -193,7 +242,7 @@ const AdminOffers: FC = () => {
     }
 
     function percentFocusHandler() {
-        dispatchOffer({ type: OfferActions.FOCUS_PERCENT });
+        dispatchOffer({ type: OfferActions.FOCUS_PERCENT, payload: true });
     }
 
     function percentChangeHandler(event: ChangeEvent<HTMLInputElement>) {
@@ -213,18 +262,15 @@ const AdminOffers: FC = () => {
 
         const offer = await addOffer(offerToCreate);
 
+        console.log(offer);
+
         // Update offer state
         setOffers((prevState) => {
             const stateCopy = cloneDeep(prevState);
-            stateCopy.push(offer);
-            return stateCopy;
+            return [offer, ...stateCopy];
         });
 
-        // Clear
-        dispatchOffer({ type: OfferActions.CHANGE_FROM_DATE, payload: "" });
-        dispatchOffer({ type: OfferActions.CHANGE_UNTIL_DATE, payload: "" });
-        dispatchOffer({ type: OfferActions.CHANGE_PERCENT, payload: 0 });
-        setSelectedProducts([]);
+        dispatchOffer({ type: OfferActions.RESET_FORM });
         setSelectedProduct({ id: -1, title: "products" });
     }
 
@@ -279,7 +325,6 @@ const AdminOffers: FC = () => {
                     />
                     <select
                         className={"select select-bordered w-full max-w-xs m-1"}
-                        defaultValue="products"
                         onChange={productSelectChangeHandler}
                         value={selectedProduct?.id}
                     >
@@ -307,7 +352,7 @@ const AdminOffers: FC = () => {
                 </div>
 
                 <div className="mt-2">
-                    {selectedProducts.map((prod) => (
+                    {offerState.productsEntry.map((prod) => (
                         <button
                             type="button"
                             className="btn btn-accent m-1"
