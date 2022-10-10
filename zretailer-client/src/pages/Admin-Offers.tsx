@@ -1,4 +1,11 @@
-import { FC, ChangeEvent, useEffect, useState, useReducer } from "react";
+import {
+    FC,
+    ChangeEvent,
+    MouseEvent,
+    useEffect,
+    useState,
+    useReducer,
+} from "react";
 import { cloneDeep } from "lodash";
 
 import { addOffer, getAllOffers } from "../api/offers";
@@ -9,6 +16,7 @@ import { Offer } from "../interfaces/Offer";
 // Offer Reducer
 enum OfferActions {
     ADD_PROD_TO_OFFER = "ADD_PROD_TO_OFFER",
+    REMOVE_PROD_FROM_OFFER = "REMOVE_PROD_FROM_OFFER",
     CHANGE_FROM_DATE = "CHANGE_FROM_DATE",
     FOCUS_FROM_DATE = "FOCUS_FROM_DATE",
     CHANGE_UNTIL_DATE = "CHANGE_UNTIL_DATE",
@@ -25,6 +33,7 @@ type OfferAction =
     | { type: OfferActions.CHANGE_UNTIL_DATE; payload: string }
     | { type: OfferActions.CHANGE_PERCENT; payload: number }
     | { type: OfferActions.ADD_PROD_TO_OFFER; payload: ProductTitle }
+    | { type: OfferActions.REMOVE_PROD_FROM_OFFER; payload: number }
     | { type: OfferActions.VALIDATE_FORM }
     | { type: OfferActions.RESET_FORM };
 
@@ -49,6 +58,16 @@ function offerReducer(state: OfferState, action: OfferAction) {
             const stateCopy = cloneDeep(state);
             stateCopy.productsEntry.push(action.payload);
             state.productsIsValid = true;
+
+            return stateCopy;
+        }
+
+        case OfferActions.REMOVE_PROD_FROM_OFFER: {            
+            const stateCopy = cloneDeep(state);
+            stateCopy.productsEntry = stateCopy.productsEntry.filter(
+                (prod) => prod.id !== +action.payload
+            );
+            state.productsIsValid = stateCopy.productsEntry.length > 0;
 
             return stateCopy;
         }
@@ -220,6 +239,15 @@ const AdminOffers: FC = () => {
         });
     }
 
+    function removeProductHandler(event: any) {
+        const productId = event.target.getAttribute("data-product");
+        
+        dispatchOffer({
+            type: OfferActions.REMOVE_PROD_FROM_OFFER,
+            payload: productId,
+        });
+    }
+
     // Inputs change handlers
     function fromDateFocusHandler() {
         dispatchOffer({ type: OfferActions.FOCUS_FROM_DATE, payload: true });
@@ -358,6 +386,7 @@ const AdminOffers: FC = () => {
                             className="btn btn-accent m-1"
                             key={prod.id}
                             data-product={prod.id}
+                            onClick={removeProductHandler}
                         >
                             {prod.title}
                         </button>
