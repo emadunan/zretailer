@@ -8,32 +8,32 @@ import { Offer } from "../interfaces/Offer";
 
 // Offer Reducer
 enum OfferActions {
-    LOAD_OFFERS = "LOAD_OFFERS",
-    ADD_OFFER = "ADD_OFFER",
     ADD_PROD_TO_OFFER = "ADD_PROD_TO_OFFER",
     CHANGE_FROM_DATE = "CHANGE_FROM_DATE",
+    FOCUS_FROM_DATE = "FOCUS_FROM_DATE",
     CHANGE_UNTIL_DATE = "CHANGE_UNTIL_DATE",
     CHANGE_PERCENT = "CHANGE_PERCENT",
+    FOCUS_PERCENT = "FOCUS_PERCENT",
 }
 
 type OfferAction =
-    | { type: OfferActions.LOAD_OFFERS, payload: Array<Offer> }
-    | { type: OfferActions.CHANGE_FROM_DATE; payload: Date | null }
-    | { type: OfferActions.CHANGE_UNTIL_DATE; payload: Date | null }
+    | { type: OfferActions.FOCUS_FROM_DATE }
+    | { type: OfferActions.FOCUS_PERCENT }
+    | { type: OfferActions.CHANGE_FROM_DATE; payload: string }
+    | { type: OfferActions.CHANGE_UNTIL_DATE; payload: string }
     | { type: OfferActions.CHANGE_PERCENT; payload: number }
-    | { type: OfferActions.ADD_PROD_TO_OFFER; payload: ProductTitle }
-    | { type: OfferActions.ADD_OFFER; payload: Offer }
-//  | { type: 'reset' };
+    | { type: OfferActions.ADD_PROD_TO_OFFER; payload: ProductTitle };
 
 // REFACTOR: It's recommended to separate offers from the form state for performance wise
 interface OfferState {
-    offers: Offer[];
-    fromDateEntry: Date | null;
+    fromDateEntry: string;
     fromDateIsValid: boolean | null;
-    untilDateEntry: Date | null;
+    fromDataIsTouched: boolean;
+    untilDateEntry: string;
     untilDateIsValid: boolean | null;
     percentEntry: number;
     percentIsValid: boolean | null;
+    percentIsTouched: boolean;
     productsEntry: ProductTitle[];
     productsIsValid: boolean | null;
     offersFormIsValid: boolean;
@@ -41,19 +41,6 @@ interface OfferState {
 
 function offerReducer(state: OfferState, action: OfferAction) {
     switch (action.type) {
-        case OfferActions.LOAD_OFFERS: {
-            const offers = action.payload;
-            return {
-                ...state, offers
-            };
-        }
-        case OfferActions.ADD_OFFER: {
-            const stateCopy = cloneDeep(state);
-            stateCopy.offers.unshift(action.payload);
-
-            return stateCopy;
-        }
-
         case OfferActions.ADD_PROD_TO_OFFER: {
             const stateCopy = cloneDeep(state);
             stateCopy.productsEntry.push(action.payload);
@@ -61,23 +48,58 @@ function offerReducer(state: OfferState, action: OfferAction) {
             return stateCopy;
         }
 
-        case OfferActions.CHANGE_FROM_DATE: {
+        case OfferActions.FOCUS_FROM_DATE: {
             const stateCopy = cloneDeep(state);
+            stateCopy.fromDataIsTouched = true;
+
+            return stateCopy;
+        }
+
+        case OfferActions.CHANGE_FROM_DATE: {
+            const offerStartDate = new Date(action.payload);
+            const nowDate = new Date();
+
+            const isInCurrentYear =
+                offerStartDate.getFullYear() === nowDate.getFullYear();
+            const isAfterToday = offerStartDate > nowDate;
+
+            const stateCopy = cloneDeep(state);
+
             stateCopy.fromDateEntry = action.payload;
+            stateCopy.fromDateIsValid = isInCurrentYear && isAfterToday;
 
             return stateCopy;
         }
 
         case OfferActions.CHANGE_UNTIL_DATE: {
+            const offerStartDate = new Date(action.payload);
+            const nowDate = new Date(state.fromDateEntry);
+
+            const isInCurrentYear =
+                offerStartDate.getFullYear() === nowDate.getFullYear();
+            const isAfterToday = offerStartDate > nowDate;
+
             const stateCopy = cloneDeep(state);
             stateCopy.untilDateEntry = action.payload;
+            stateCopy.untilDateIsValid = isInCurrentYear && isAfterToday;
+
+            return stateCopy;
+        }
+
+        case OfferActions.FOCUS_PERCENT: {
+            const stateCopy = cloneDeep(state);
+            stateCopy.percentIsTouched = true;
 
             return stateCopy;
         }
 
         case OfferActions.CHANGE_PERCENT: {
+            const percent = action.payload;
+            const isBetween1and90 = percent >= 1 && percent <= 90;
+
             const stateCopy = cloneDeep(state);
             stateCopy.percentEntry = action.payload;
+            stateCopy.percentIsValid = isBetween1and90;
 
             return stateCopy;
         }
@@ -88,33 +110,26 @@ function offerReducer(state: OfferState, action: OfferAction) {
 }
 
 const inititalState: OfferState = {
-    offers: [],
-    fromDateEntry: new Date(),
+    fromDateEntry: "",
     fromDateIsValid: null,
-    untilDateEntry: new Date(),
+    fromDataIsTouched: false,
+    untilDateEntry: "",
     untilDateIsValid: null,
     percentEntry: 0,
     percentIsValid: null,
+    percentIsTouched: false,
     productsEntry: [],
     productsIsValid: null,
     offersFormIsValid: false,
 };
 
 const AdminOffers: FC = () => {
+    const [offers, setOffers] = useState<Offer[]>([]);
     const [offerState, dispatchOffer] = useReducer(offerReducer, inititalState);
 
-    const [productTitles, setProductTitles] = useState<
-        { id: number; title: string }[]
-    >([]);
-
-    const [selectedProduct, setSelectedProduct] = useState<{
-        id: number;
-        title: string;
-    }>();
-
-    const [selectedProducts, setSelectedProducts] = useState<
-        { id: number; title: string }[]
-    >([]);
+    const [productTitles, setProductTitles] = useState<ProductTitle[]>([]);
+    const [selectedProducts, setSelectedProducts] = useState<ProductTitle[]>([]);
+    const [selectedProduct, setSelectedProduct] = useState<ProductTitle>();
 
     useEffect(() => {
         (async () => {
@@ -124,10 +139,8 @@ const AdminOffers: FC = () => {
 
         (async () => {
             const offersData = await getAllOffers();
-            console.log(offersData);
-
-            dispatchOffer({ type: OfferActions.LOAD_OFFERS, payload: offersData });
-        })()
+            setOffers(offersData);
+        })();
     }, []);
 
     function productSelectChangeHandler(event: ChangeEvent<HTMLSelectElement>) {
@@ -159,11 +172,15 @@ const AdminOffers: FC = () => {
     }
 
     // Inputs change handlers
+    function fromDateFocusHandler() {
+        dispatchOffer({ type: OfferActions.FOCUS_FROM_DATE });
+    }
+
     function fromDateChangeHandler(event: ChangeEvent<HTMLInputElement>) {
         const fromDate = event.target.value;
         dispatchOffer({
             type: OfferActions.CHANGE_FROM_DATE,
-            payload: fromDate ? new Date(fromDate) : null,
+            payload: fromDate,
         });
     }
 
@@ -171,8 +188,12 @@ const AdminOffers: FC = () => {
         const untilDate = event.target.value;
         dispatchOffer({
             type: OfferActions.CHANGE_UNTIL_DATE,
-            payload: untilDate ? new Date(untilDate) : null,
+            payload: untilDate,
         });
+    }
+
+    function percentFocusHandler() {
+        dispatchOffer({ type: OfferActions.FOCUS_PERCENT });
     }
 
     function percentChangeHandler(event: ChangeEvent<HTMLInputElement>) {
@@ -182,7 +203,6 @@ const AdminOffers: FC = () => {
 
     async function addOfferHandler(event: any) {
         event.preventDefault();
-        console.log(offerState);
 
         const offerToCreate: any = {
             percent: offerState.percentEntry,
@@ -193,13 +213,19 @@ const AdminOffers: FC = () => {
 
         const offer = await addOffer(offerToCreate);
 
-        console.log(offer);
-
         // Update offer state
-        dispatchOffer({ type: OfferActions.ADD_OFFER, payload: offer });
-        // offerState.fromDateEntry = null;
-        // offerState.untilDateEntry = null;
-        offerState.percentEntry = 0;
+        setOffers((prevState) => {
+            const stateCopy = cloneDeep(prevState);
+            stateCopy.push(offer);
+            return stateCopy;
+        });
+
+        // Clear
+        dispatchOffer({ type: OfferActions.CHANGE_FROM_DATE, payload: "" });
+        dispatchOffer({ type: OfferActions.CHANGE_UNTIL_DATE, payload: "" });
+        dispatchOffer({ type: OfferActions.CHANGE_PERCENT, payload: 0 });
+        setSelectedProducts([]);
+        setSelectedProduct({ id: -1, title: "products" });
     }
 
     return (
@@ -213,30 +239,51 @@ const AdminOffers: FC = () => {
                     <input
                         type="date"
                         placeholder="From date"
-                        className="input input-bordered w-full max-w-xs min-w-min m-1"
+                        className={
+                            "input input-bordered w-full max-w-xs min-w-min m-1 " +
+                            (!offerState.fromDateIsValid &&
+                            offerState.fromDataIsTouched
+                                ? "border-rose-600 border-2"
+                                : "")
+                        }
+                        onFocus={fromDateFocusHandler}
                         onChange={fromDateChangeHandler}
-                        value={offerState.fromDateEntry?.toLocaleDateString("en-CA")}
+                        value={offerState.fromDateEntry}
                     />
                     <input
                         type="date"
                         placeholder="Until Date"
-                        className="input input-bordered w-full max-w-xs min-w-min m-1"
+                        className={
+                            "input input-bordered w-full max-w-xs min-w-min m-1 " +
+                            (!offerState.untilDateIsValid
+                                ? "border-rose-600 border-2"
+                                : "")
+                        }
                         onChange={untilDateChangeHandler}
-                        value={offerState.untilDateEntry?.toLocaleDateString("en-CA")}
+                        value={offerState.untilDateEntry}
+                        disabled={!offerState.fromDateIsValid}
                     />
                     <input
                         type="number"
                         placeholder="Offer Percent %"
-                        className="input input-bordered w-full max-w-xs m-1"
+                        className={
+                            "input input-bordered w-full max-w-xs m-1 " +
+                            (!offerState.percentIsValid &&
+                            offerState.percentIsTouched
+                                ? "border-rose-600 border-2"
+                                : "")
+                        }
+                        onFocus={percentFocusHandler}
                         onChange={percentChangeHandler}
                         value={offerState.percentEntry}
                     />
                     <select
-                        className="select select-bordered w-full max-w-xs m-1"
+                        className={"select select-bordered w-full max-w-xs m-1"}
                         defaultValue="products"
                         onChange={productSelectChangeHandler}
+                        value={selectedProduct?.id}
                     >
-                        <option disabled value="products">
+                        <option disabled value={"-1"}>
                             Products
                         </option>
                         {productTitles.map((prod) => (
@@ -272,7 +319,11 @@ const AdminOffers: FC = () => {
                     ))}
                 </div>
                 <div className="divider"></div>
-                <button type="submit" className="btn mt-4">
+                <button
+                    type="submit"
+                    className="btn mt-4"
+                    disabled={!offerState.offersFormIsValid}
+                >
                     Add Offer
                 </button>
             </form>
@@ -288,14 +339,22 @@ const AdminOffers: FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {offerState.offers.map((offer: Offer) => {
+                        {offers.map((offer: Offer) => {
                             return (
                                 <tr key={offer.id}>
                                     <th>1</th>
                                     <td>{offer.percent} %</td>
-                                    <td>{offer.fromDate.toString()}</td>
-                                    <td>{offer.untilDate.toString()}</td>
                                     <td>
+                                        {offer.fromDate
+                                            .toString()
+                                            .substring(0, 10)}
+                                    </td>
+                                    <td>
+                                        {offer.untilDate
+                                            .toString()
+                                            .substring(0, 10)}
+                                    </td>
+                                    <td className="flex flex-row flex-wrap">
                                         {offer.products
                                             .map(
                                                 (prod: ProductTitle) =>

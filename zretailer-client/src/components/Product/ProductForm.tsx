@@ -15,7 +15,7 @@ type ValidationAction =
     | { type: ValidationActions.VALIDATE_NAME; payload: boolean | null }
     | { type: ValidationActions.VALIDATE_CATEGORY; payload: boolean | null }
     | { type: ValidationActions.TOUCH_NAME; payload: boolean }
-    | { type: ValidationActions.TOUCH_CATEGORY; payload: boolean }
+    | { type: ValidationActions.TOUCH_CATEGORY; payload: boolean };
 
 interface ValidationState {
     nameIsValid: boolean | null;
@@ -26,7 +26,10 @@ interface ValidationState {
 }
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-function validationReducer(state: ValidationState|any, action: ValidationAction) {
+function validationReducer(
+    state: ValidationState | any,
+    action: ValidationAction
+) {
     switch (action.type) {
         case ValidationActions.VALIDATE_NAME: {
             return {
