@@ -1,5 +1,5 @@
 import { FC, useEffect, useReducer } from "react";
-import { Link, Outlet, useLoaderData, useLocation } from "react-router-dom";
+import { Link, Outlet, useLoaderData, useLocation, useParams } from "react-router-dom";
 
 import { Product } from "../interfaces/Product";
 import ProductsTbl from "../components/Product/ProductsTbl";
@@ -55,6 +55,9 @@ const AdminProducts: FC = () => {
     };
 
     const location = useLocation();
+    const params = useParams();
+    const haveProductIdParam = !!params.productId;
+
     const isRegisterForm = location.pathname.includes("register");
 
     const [productState, dispatchProduct] = useReducer(
@@ -104,14 +107,16 @@ const AdminProducts: FC = () => {
             </div>
 
             <Outlet />
-            <ProductsTbl
-                products={productState.products}
-                pages={productState.pages}
-                pageSize={productState.pageSize}
-                /* eslint-disable  @typescript-eslint/no-non-null-assertion */
-                currentPage={productState.currentPage!}
-                onGetPageProducts={getPageProductsHandler}
-            />
+            {!haveProductIdParam && (
+                <ProductsTbl
+                    products={productState.products}
+                    pages={productState.pages}
+                    pageSize={productState.pageSize}
+                    /* eslint-disable  @typescript-eslint/no-non-null-assertion */
+                    currentPage={productState.currentPage!}
+                    onGetPageProducts={getPageProductsHandler}
+                />
+            )}
         </div>
     );
 };

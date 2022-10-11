@@ -1,6 +1,8 @@
 import { FC } from "react";
+import { Link } from "react-router-dom";
 
-const ProductRow: FC<{
+interface ProductRowProps {
+    id: string;
     idx: number;
     title: string;
     category: string;
@@ -8,7 +10,9 @@ const ProductRow: FC<{
     pkgPriceBuy: number;
     pkgPriceSell: number;
     unitPrice: number;
-}> = (props) => {
+}
+
+const ProductRow: FC<ProductRowProps> = (props) => {    
     return (
         <tr>
             <th>{props.idx}</th>
@@ -19,8 +23,7 @@ const ProductRow: FC<{
             <td>{props.pkgPriceSell}</td>
             <td>{props.unitPrice}</td>
             <td>
-                <button className="btn btn-primary btn-xs mx-1">Edit</button>
-                <button className="btn btn-error btn-xs mx-1">Delete</button>
+                <Link className="btn btn-primary btn-xs mx-1" to={`${props.id}`}>Details</Link>
             </td>
         </tr>
     );

@@ -1,9 +1,13 @@
-import { body, query } from "express-validator";
+import { body, query, param } from "express-validator";
 
 export const getProducts = [
     query("page").isNumeric(),
     query("size").isNumeric(),
 ];
+
+export const getOneProduct = [
+    param("productId").isNumeric(),
+]
 
 export const postProducts = [
     body("title").isString(),

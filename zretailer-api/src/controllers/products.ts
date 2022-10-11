@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 import {
     createProduct,
     findProducts,
+    getOneProduct,
     getProductTitles,
 } from "../handlers/products";
 
@@ -35,6 +36,27 @@ router.get(
         }
     }
 );
+
+router.get("/products/:productId", Validations.getOneProduct, async (req: Request, res: Response, next: NextFunction) => {
+    // Validate Request
+    const validationErrors = validationResult(req);
+
+    if (!validationErrors.isEmpty())
+        return res.status(400).json({
+            errMessage: "ValidationError",
+            errors: validationErrors.array(),
+        });
+
+    const productId = +req.params.productId;
+
+    try {
+        const product = await getOneProduct(productId);
+        res.json(product);
+
+    } catch (error) {
+        next();
+    }
+})
 
 router.get(
     "/product-titles",
@@ -74,6 +96,8 @@ router.post(
 
             // Save record in database and return it in response body
             const product = await createProduct(productToCreate);
+
+            // Respond with 200 OK
             res.json(product);
         } catch (error) {
             next(error);

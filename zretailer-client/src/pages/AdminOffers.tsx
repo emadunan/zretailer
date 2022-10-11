@@ -62,7 +62,7 @@ function offerReducer(state: OfferState, action: OfferAction) {
             return stateCopy;
         }
 
-        case OfferActions.REMOVE_PROD_FROM_OFFER: {            
+        case OfferActions.REMOVE_PROD_FROM_OFFER: {
             const stateCopy = cloneDeep(state);
             stateCopy.productsEntry = stateCopy.productsEntry.filter(
                 (prod) => prod.id !== +action.payload
@@ -241,7 +241,7 @@ const AdminOffers: FC = () => {
 
     function removeProductHandler(event: any) {
         const productId = event.target.getAttribute("data-product");
-        
+
         dispatchOffer({
             type: OfferActions.REMOVE_PROD_FROM_OFFER,
             payload: productId,
@@ -289,8 +289,6 @@ const AdminOffers: FC = () => {
         };
 
         const offer = await addOffer(offerToCreate);
-
-        console.log(offer);
 
         // Update offer state
         setOffers((prevState) => {
@@ -429,7 +427,13 @@ const AdminOffers: FC = () => {
                                             .substring(0, 10)}
                                     </td>
                                     <td className="flex flex-row flex-wrap">
-                                        {offer.products.map((prod: ProductTitle) => <span key={prod.id}>{prod.title},&nbsp;</span>)}
+                                        {offer.products.map(
+                                            (prod: ProductTitle) => (
+                                                <span key={prod.id}>
+                                                    {prod.title},&nbsp;
+                                                </span>
+                                            )
+                                        )}
                                     </td>
                                 </tr>
                             );

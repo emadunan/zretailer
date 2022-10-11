@@ -21,6 +21,14 @@ export async function findProducts(pageNumbr: number, pageSize: number) {
     return { pageSize, pages, products };
 }
 
+export async function getOneProduct(id: number) {
+    return await prisma.product.findUnique({
+        where: {
+            id
+        }
+    })
+}
+
 export async function getProductTitles() {
     return await prisma.product.findMany({
         select: {

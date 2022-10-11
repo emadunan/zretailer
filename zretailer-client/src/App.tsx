@@ -14,8 +14,9 @@ import About from "./pages/About";
 import AdminProducts, {
     loader as adminProductsLoader,
     action as addProductAction,
-} from "./pages/Admin-Products";
-import AdminOffers from "./pages/Admin-Offers";
+} from "./pages/AdminProducts";
+import ProductDetails from "./pages/ProductDetails";
+import AdminOffers from "./pages/AdminOffers";
 import NotFound from "./pages/Not-Found";
 import ErrorPage from "./pages/ErrorPage";
 import ProductForm from "./components/Product/ProductForm";
@@ -36,6 +37,7 @@ const router = createBrowserRouter(
                     action={addProductAction}
                 >
                     <Route path="register" element={<ProductForm />} />
+                    <Route path=":productId" element={<ProductDetails />} />
                 </Route>
                 <Route path="offers" element={<AdminOffers />} />
             </Route>
