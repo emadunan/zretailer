@@ -405,7 +405,7 @@ const AdminOffers: FC = () => {
                 <table className="table w-full">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th>#</th>
                             <th>Percent</th>
                             <th>From</th>
                             <th>Until</th>
@@ -413,10 +413,10 @@ const AdminOffers: FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {offers.map((offer: Offer) => {
+                        {offers.map((offer: Offer, idx: number) => {
                             return (
                                 <tr key={offer.id}>
-                                    <th>1</th>
+                                    <th>{++idx}</th>
                                     <td>{offer.percent} %</td>
                                     <td>
                                         {offer.fromDate
@@ -429,12 +429,7 @@ const AdminOffers: FC = () => {
                                             .substring(0, 10)}
                                     </td>
                                     <td className="flex flex-row flex-wrap">
-                                        {offer.products
-                                            .map(
-                                                (prod: ProductTitle) =>
-                                                    ` ${prod.title}`
-                                            )
-                                            .toString()}
+                                        {offer.products.map((prod: ProductTitle) => <span key={prod.id}>{prod.title},&nbsp;</span>)}
                                     </td>
                                 </tr>
                             );
