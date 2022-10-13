@@ -8,11 +8,21 @@ import { Product } from "../interfaces/Product";
 //     id: number;
 // }
 
+const productInitialState: Product =  {
+    id: "-1",
+    title: "",
+    category: "",
+    pkgCap: 0,
+    pkgPriceBuy:0,
+    pkgPriceSell:0,
+    unitPrice: 0,
+}
+
 const ProductDetails: FC = () => {
     const params = useParams();
     const productId = parseInt(params.productId as string);
 
-    const [product, setProduct] = useState<Product>();
+    const [product, setProduct] = useState<Product>(productInitialState);
     const [files, setFiles] = useState([]);
 
     useEffect(() => {
@@ -24,39 +34,39 @@ const ProductDetails: FC = () => {
     }, [productId]);
 
     function titleChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        setProduct(prevState => {
-            if (prevState) return {...prevState, title: event.target.value};
-        })    
+        // setProduct(prevState => {
+        //     if (prevState) return {...prevState, title: event.target.value};
+        // })    
     }
 
     function categoryChangeHandler(event: ChangeEvent<HTMLSelectElement>) {
-        setProduct(prevState => {
-            if (prevState) return {...prevState, category: event.target.value};
-        })   
+        // setProduct(prevState => {
+        //     if (prevState) return {...prevState, category: event.target.value};
+        // })   
     }
 
     function pkgCapChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        setProduct(prevState => {
-            if (prevState) return {...prevState, pkgCap: +event.target.value};
-        })   
+        // setProduct(prevState => {
+        //     if (prevState) return {...prevState, pkgCap: +event.target.value};
+        // })   
     }
 
     function pkgPriceBuyChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        setProduct(prevState => {
-            if (prevState) return {...prevState, pkgPriceBuy: +event.target.value};
-        });   
+        // setProduct(prevState => {
+        //     if (prevState) return {...prevState, pkgPriceBuy: +event.target.value};
+        // });   
     }
 
     function pkgPriceSellChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        setProduct(prevState => {
-            if (prevState) return {...prevState, pkgPriceSell: +event.target.value};
-        });  
+        // setProduct(prevState => {
+        //     if (prevState) return {...prevState, pkgPriceSell: +event.target.value};
+        // });  
     }
 
     function unitPriceChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        setProduct(prevState => {
-            if (prevState) return {...prevState, unitPrice: +event.target.value};
-        });
+        // setProduct(prevState => {
+        //     if (prevState) return {...prevState, unitPrice: +event.target.value};
+        // });
     }
 
 
@@ -94,7 +104,7 @@ const ProductDetails: FC = () => {
                 </div>
             </div>
             <div className="divider"></div>
-            <div className="flex justify-between">
+            <div className="flex flex-row justify-between">
                 <form className="flex flex-wrap" onSubmit={upLoadHandler}>
                     <input hidden defaultValue={productId} />
                     <input
@@ -130,7 +140,6 @@ const ProductDetails: FC = () => {
                 />
                 <select
                     className="select select-sm select-bordered w-full max-w-xs m-2 "
-                    defaultValue="category"
                     onChange={categoryChangeHandler}
                     value={product?.category}
                 >
