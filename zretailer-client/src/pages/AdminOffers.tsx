@@ -1,11 +1,4 @@
-import {
-    FC,
-    ChangeEvent,
-    MouseEvent,
-    useEffect,
-    useState,
-    useReducer,
-} from "react";
+import { FC, ChangeEvent, useEffect, useState, useReducer } from "react";
 import { cloneDeep } from "lodash";
 
 import { addOffer, getAllOffers } from "../api/offers";

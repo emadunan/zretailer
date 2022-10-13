@@ -7,7 +7,7 @@ export interface Product {
     pkgPriceBuy: number;
     pkgPriceSell: number;
     unitPrice: number;
-    photo?: File;
+    photo?: string;
 }
 
 export interface ProductTitle {
