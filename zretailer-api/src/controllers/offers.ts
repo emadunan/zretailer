@@ -8,24 +8,26 @@ import * as Validations from "../validations/offers";
 const router = Router();
 
 // Fetch all offers
-router.get("/offers", async (_req: Request, res: Response, next: NextFunction) => {
-    try {
-        const offers = await getAllOffers();
-        res.json(offers);
-    } catch (error) {
-        next();
+router.get(
+    "/offers",
+    async (_req: Request, res: Response, next: NextFunction) => {
+        try {
+            const offers = await getAllOffers();
+            res.json(offers);
+        } catch (error) {
+            next();
+        }
     }
-});
+);
 
 // Create offer
 router.post(
     "/offers",
     Validations.postOffers,
     async (req: Request, res: Response, next: NextFunction) => {
-        // Validate Request        
+        // Validate Request
         const validationErrors = validationResult(req);
         if (!validationErrors.isEmpty())
-        
             return res.status(400).json({
                 errMessage: "ValidationError",
                 errors: validationErrors.array(),
@@ -38,9 +40,9 @@ router.post(
                 fromDate: req.body.fromDate,
                 untilDate: req.body.untilDate,
                 productIds: req.body.products.map((prod: Partial<Product>) => {
-                    return {id: prod.id};
+                    return { id: prod.id };
                 }),
-            };            
+            };
 
             // Save record in database and return it in response body
             const offer = await createOffer(offerToCreate);

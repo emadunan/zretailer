@@ -15,7 +15,7 @@ export async function getProducts(
 }
 
 export async function getOneProduct(productId: number) {
-    const response = await fetch(`${apiUrl}/products/${productId}`);    
+    const response = await fetch(`${apiUrl}/products/${productId}`);
 
     if (!response.ok) throw new Error("Failed to get Product!");
     return await response.json();
@@ -40,5 +40,23 @@ export async function addProduct(product: any) {
     });
 
     if (!response.ok) throw new Error("Failed to add product");
+    return await response.json();
+}
+
+export async function uploadProductPhoto(productId: number, file: any) {
+    const formData = new FormData();
+
+    formData.append("productId", productId as unknown as string);
+    formData.append("file", file[0]);
+
+    console.log(formData.get("file"));
+    console.log(formData.get("productId"));
+
+    const response = await fetch(`${apiUrl}/products/upload/product-photo`, {
+        method: "POST",
+        body: formData,
+    });
+
+    if (!response.ok) throw new Error("Failed to upload product's photo!");
     return await response.json();
 }

@@ -9,7 +9,7 @@ const FileUpload: FC = () => {
         const files = event.target.files;
 
         if (files && files.length > 0) {
-            const file = files[0]
+            const file = files[0];
         }
     }
     return (

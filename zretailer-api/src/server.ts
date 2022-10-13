@@ -5,6 +5,8 @@ import cors from "cors";
 
 import productsRouter from "./controllers/products";
 import offersRouter from "./controllers/offers";
+import uploadsRouter from "./controllers/uploads";
+
 import { errorHandler, pageNotFoundHandler } from "./controllers/error";
 
 // Extract environment variables
@@ -21,6 +23,7 @@ app.use(bodyParser.json());
 // Register Controllers Routes
 app.use("/api", productsRouter);
 app.use("/api", offersRouter);
+app.use("/api/public", express.static("uploads"));
 
 // Handle Errors
 app.use(pageNotFoundHandler);

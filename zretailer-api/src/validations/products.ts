@@ -5,9 +5,7 @@ export const getProducts = [
     query("size").isNumeric(),
 ];
 
-export const getOneProduct = [
-    param("productId").isNumeric(),
-]
+export const getOneProduct = [param("productId").isNumeric()];
 
 export const postProducts = [
     body("title").isString(),

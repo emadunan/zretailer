@@ -1,5 +1,11 @@
 import { FC, useEffect, useReducer } from "react";
-import { Link, Outlet, useLoaderData, useLocation, useParams } from "react-router-dom";
+import {
+    Link,
+    Outlet,
+    useLoaderData,
+    useLocation,
+    useParams,
+} from "react-router-dom";
 
 import { Product } from "../interfaces/Product";
 import ProductsTbl from "../components/Product/ProductsTbl";
@@ -93,18 +99,20 @@ const AdminProducts: FC = () => {
                 function
             </p>
 
-            <div className="my-6 flex flex-row items-center justify-center">
-                {!isRegisterForm && (
-                    <Link to="register" className="link link-primary">
-                        Register New Product
-                    </Link>
-                )}
-                {isRegisterForm && (
-                    <Link to="" className="link link-primary">
-                        Hide Registeration Form
-                    </Link>
-                )}
-            </div>
+            {!haveProductIdParam && (
+                <div className="my-6 flex flex-row items-center justify-center">
+                    {!isRegisterForm && (
+                        <Link to="register" className="link link-primary">
+                            Register New Product
+                        </Link>
+                    )}
+                    {isRegisterForm && (
+                        <Link to="" className="link link-primary">
+                            Hide Registeration Form
+                        </Link>
+                    )}
+                </div>
+            )}
 
             <Outlet />
             {!haveProductIdParam && (

@@ -19,6 +19,7 @@ model Product {
   pkgPriceBuy  Int
   pkgPriceSell Int
   unitPrice    Int
+  photo        String?
   offers       Offer[]
 }
 

@@ -24,9 +24,9 @@ export async function findProducts(pageNumbr: number, pageSize: number) {
 export async function getOneProduct(id: number) {
     return await prisma.product.findUnique({
         where: {
-            id
-        }
-    })
+            id,
+        },
+    });
 }
 
 export async function getProductTitles() {
@@ -34,6 +34,17 @@ export async function getProductTitles() {
         select: {
             id: true,
             title: true,
+        },
+    });
+}
+
+export async function updateProductPhoto(productId: number, fileName: string) {
+    return await prisma.product.update({
+        where: {
+            id: productId,
+        },
+        data: {
+            photo: fileName,
         },
     });
 }

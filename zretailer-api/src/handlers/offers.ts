@@ -5,11 +5,11 @@ import { OfferToCreate } from "../interfaces/Offer";
 export async function getAllOffers() {
     return await prisma.offer.findMany({
         include: {
-            products: true
+            products: true,
         },
         orderBy: {
-            id: "desc"
-        }
+            id: "desc",
+        },
     });
 }
 

@@ -1,6 +1,8 @@
 import { FC, ChangeEvent, useEffect, useReducer } from "react";
 import { Form } from "react-router-dom";
 
+import { Categories } from "../../data/categories";
+
 // Validation Reducer Setup
 enum ValidationActions {
     VALIDATE_NAME = "VALIDATE_NAME",
@@ -154,18 +156,11 @@ const ProductForm: FC = () => {
                 <option disabled value="category">
                     Category
                 </option>
-                <option value="meat and fish">Meat and Fish</option>
-                <option value="dairy">Dairy</option>
-                <option value="vegetables and fruit">
-                    Vegetables and fruit
-                </option>
-                <option value="freezer">Freezer</option>
-                <option value="bread and bread spreads">
-                    Bread and bread spreads
-                </option>
-                <option value="dried goods">Dried Goods</option>
-                <option value="snacks">Snacks</option>
-                <option value="care products">Care Products</option>
+                {Categories.map((cat: string, idx: number) => (
+                    <option key={idx} value={cat}>
+                        {cat}
+                    </option>
+                ))}
             </select>
             <textarea
                 className="textarea textarea-bordered w-full m-2"

@@ -1,13 +1,17 @@
 import { NextFunction, Request, Response, Router } from "express";
+import multer from "multer";
 import { validationResult } from "express-validator";
 import {
     createProduct,
     findProducts,
     getOneProduct,
     getProductTitles,
+    updateProductPhoto,
 } from "../handlers/products";
 
 import * as Validations from "../validations/products";
+
+const upload = multer({ dest: "uploads/" });
 
 const router = Router();
 
@@ -37,26 +41,29 @@ router.get(
     }
 );
 
-router.get("/products/:productId", Validations.getOneProduct, async (req: Request, res: Response, next: NextFunction) => {
-    // Validate Request
-    const validationErrors = validationResult(req);
+router.get(
+    "/products/:productId",
+    Validations.getOneProduct,
+    async (req: Request, res: Response, next: NextFunction) => {
+        // Validate Request
+        const validationErrors = validationResult(req);
 
-    if (!validationErrors.isEmpty())
-        return res.status(400).json({
-            errMessage: "ValidationError",
-            errors: validationErrors.array(),
-        });
+        if (!validationErrors.isEmpty())
+            return res.status(400).json({
+                errMessage: "ValidationError",
+                errors: validationErrors.array(),
+            });
 
-    const productId = +req.params.productId;
+        const productId = +req.params.productId;
 
-    try {
-        const product = await getOneProduct(productId);
-        res.json(product);
-
-    } catch (error) {
-        next();
+        try {
+            const product = await getOneProduct(productId);
+            res.json(product);
+        } catch (error) {
+            next();
+        }
     }
-})
+);
 
 router.get(
     "/product-titles",
@@ -101,6 +108,24 @@ router.post(
             res.json(product);
         } catch (error) {
             next(error);
+        }
+    }
+);
+
+router.post(
+    "/products/upload/product-photo",
+    upload.single("file"),
+    async (req: Request, res: Response, next: NextFunction) => {
+        const productId = +req.body.productId;
+        const productPhoto = req.file?.filename;
+
+        if (!productPhoto) return;
+
+        try {
+            const prod = await updateProductPhoto(productId, productPhoto);
+            res.json(prod);
+        } catch (error) {
+            next();
         }
     }
 );

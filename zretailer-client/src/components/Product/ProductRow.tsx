@@ -12,7 +12,7 @@ interface ProductRowProps {
     unitPrice: number;
 }
 
-const ProductRow: FC<ProductRowProps> = (props) => {    
+const ProductRow: FC<ProductRowProps> = (props) => {
     return (
         <tr>
             <th>{props.idx}</th>
@@ -23,7 +23,12 @@ const ProductRow: FC<ProductRowProps> = (props) => {
             <td>{props.pkgPriceSell}</td>
             <td>{props.unitPrice}</td>
             <td>
-                <Link className="btn btn-primary btn-xs mx-1" to={`${props.id}`}>Details</Link>
+                <Link
+                    className="btn btn-primary btn-xs mx-1"
+                    to={`${props.id}`}
+                >
+                    Details
+                </Link>
             </td>
         </tr>
     );
