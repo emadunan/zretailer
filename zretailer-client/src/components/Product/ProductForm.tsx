@@ -117,7 +117,7 @@ const ProductForm: FC = () => {
     }, [nameIsValid, categoryIsValid]);
 
     return (
-        <Form className="flex flex-wrap" method="post" action="/admin/products">
+        <Form className="flex flex-wrap" method="post" action="/admin/products" encType="application/json">
             <input
                 type="text"
                 placeholder="name"
