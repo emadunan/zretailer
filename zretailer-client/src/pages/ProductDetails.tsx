@@ -18,14 +18,47 @@ const ProductDetails: FC = () => {
     useEffect(() => {
         // Fetch Product details
         (async () => {
-            const product = await getOneProduct(productId);
-            setProduct(product);
+            const productData: Product = await getOneProduct(productId);
+            setProduct(productData);
         })();
-    }, []);
+    }, [productId]);
+
+    function titleChangeHandler(event: ChangeEvent<HTMLInputElement>) {
+        setProduct(prevState => {
+            if (prevState) return {...prevState, title: event.target.value};
+        })    
+    }
 
     function categoryChangeHandler(event: ChangeEvent<HTMLSelectElement>) {
-        console.log(event.target);
+        setProduct(prevState => {
+            if (prevState) return {...prevState, category: event.target.value};
+        })   
     }
+
+    function pkgCapChangeHandler(event: ChangeEvent<HTMLInputElement>) {
+        setProduct(prevState => {
+            if (prevState) return {...prevState, pkgCap: +event.target.value};
+        })   
+    }
+
+    function pkgPriceBuyChangeHandler(event: ChangeEvent<HTMLInputElement>) {
+        setProduct(prevState => {
+            if (prevState) return {...prevState, pkgPriceBuy: +event.target.value};
+        });   
+    }
+
+    function pkgPriceSellChangeHandler(event: ChangeEvent<HTMLInputElement>) {
+        setProduct(prevState => {
+            if (prevState) return {...prevState, pkgPriceSell: +event.target.value};
+        });  
+    }
+
+    function unitPriceChangeHandler(event: ChangeEvent<HTMLInputElement>) {
+        setProduct(prevState => {
+            if (prevState) return {...prevState, unitPrice: +event.target.value};
+        });
+    }
+
 
     function photoChangeHandler(event: any) {
         setFiles(event.target.files);
@@ -93,10 +126,10 @@ const ProductDetails: FC = () => {
                     className="input input-sm input-bordered w-full max-w-xs m-2 "
                     name="name"
                     value={product?.title}
+                    onChange={titleChangeHandler}
                 />
                 <select
                     className="select select-sm select-bordered w-full max-w-xs m-2 "
-                    name="category"
                     defaultValue="category"
                     onChange={categoryChangeHandler}
                     value={product?.category}
@@ -113,36 +146,35 @@ const ProductDetails: FC = () => {
                 <textarea
                     className="textarea textarea-bordered w-full m-2"
                     placeholder="description"
-                    name="desc"
                     value={product?.desc}
                 ></textarea>
                 <input
                     type="number"
                     placeholder="package capacity"
                     className="input input-sm input-bordered w-48 max-w-xs m-2"
-                    name="pkg-cap"
                     value={product?.pkgCap}
+                    onChange={pkgCapChangeHandler}
                 />
                 <input
                     type="number"
                     placeholder="package buy price"
                     className="input input-sm input-bordered w-48 max-w-xs m-2"
-                    name="pkg-price-buy"
                     value={product?.pkgPriceBuy}
+                    onChange={pkgPriceBuyChangeHandler}
                 />
                 <input
                     type="number"
                     placeholder="package sell price"
                     className="input input-sm input-bordered w-48 max-w-xs m-2"
-                    name="pkg-price-sell"
                     value={product?.pkgPriceSell}
+                    onChange={pkgPriceSellChangeHandler}
                 />
                 <input
                     type="number"
                     placeholder="unit price"
                     className="input input-sm input-bordered w-48 max-w-xs m-2"
-                    name="unit-price"
                     value={product?.unitPrice}
+                    onChange={unitPriceChangeHandler}
                 />
                 <button className="btn btn-sm m-2" disabled={true}>
                     Add Product
