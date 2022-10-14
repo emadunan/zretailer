@@ -52,20 +52,18 @@ const productInitialState: ProductState = {
 enum ProductActions {
     LOAD_PRODUCT = "LOAD_PRODUCT",
     LOAD_PHOTO = "LOAD_PHOTO",
+    CHANGE_TITLE = "CHANGE_TITLE",
+    CHANGE_CATEGORY = "CHANGE_CATEGORY",
+    CHANGE_DESC = "CHANGE_DESC",
+    CHANGE_PKG_CAP = "CHANGE_PKG_CAP",
+    CHANGE_PKG_PRICE_BUY = "CHANGE_PKG_PRICE_BUY",
+    CHANGE_PKG_PRICE_SELL = "CHANGE_PKG_PRICE_SELL",
+    CHANGE_UNIT_PRICE = "CHANGE_UNIT_PRICE",
     VALIDATE_PHOTO = "VALIDATE_PHOTO",
-    // VALIDATE_TITLE = "VALIDATE_TITLE",
-
-    // VALIDATE_PKG_CAP = "VALIDATE_PKG_CAP",
-    // VALIDATE_PKG_PRICE_BUY = "VALIDATE_PKG_PRICE_BUY",
-    // VALIDATE_PKG_PRICE_SELL = "VALIDATE_PKG_PRICE_SELL",
-    // VALIDATE_UNIT_PRICE = "VALIDATE_UNIT_PRICE",
-
-    // VALIDATE_EDIT_FROM = "VALIDATE_EDIT_FROM",
+    VALIDATE_EDIT_FROM = "VALIDATE_EDIT_FROM",
 }
 
 type ProductAction =
-    | { type: ProductActions.VALIDATE_PHOTO; payload: boolean }
-    | { type: ProductActions.LOAD_PHOTO; payload: string }
     | {
         type: ProductActions.LOAD_PRODUCT;
         payload: {
@@ -79,16 +77,22 @@ type ProductAction =
             pkgPriceSell: number;
             unitPrice: number;
         };
-    };
+    }
+    | { type: ProductActions.LOAD_PHOTO; payload: string }
+    | { type: ProductActions.CHANGE_TITLE; payload: string }
+    | { type: ProductActions.CHANGE_CATEGORY; payload: string }
+    | { type: ProductActions.CHANGE_DESC; payload: string }
+    | { type: ProductActions.CHANGE_PKG_CAP; payload: number }
+    | { type: ProductActions.CHANGE_PKG_PRICE_BUY; payload: number }
+    | { type: ProductActions.CHANGE_PKG_PRICE_SELL; payload: number }
+    | { type: ProductActions.CHANGE_UNIT_PRICE; payload: number }
+    | { type: ProductActions.VALIDATE_PHOTO; payload: boolean }
+    | { type: ProductActions.VALIDATE_EDIT_FROM; payload: boolean }
 
 function productReducer(state: ProductState, action: ProductAction) {
     const { type, payload } = action;
 
     switch (type) {
-
-        case ProductActions.VALIDATE_PHOTO: {
-            return { ...state, photoIsValid: payload };
-        }
 
         case ProductActions.LOAD_PHOTO: {
             return { ...state, photo: payload }
@@ -106,37 +110,49 @@ function productReducer(state: ProductState, action: ProductAction) {
                 pkgPriceBuyEntry: payload.pkgPriceBuy,
                 pkgPriceSellEntry: payload.pkgPriceSell,
                 unitPriceEntry: payload.unitPrice,
+                titleIsValid: payload.title.length > 3,
+                pkgCapIsValid: payload.pkgCap > 0,
+                pkgPriceBuyIsValid: payload.pkgPriceBuy > 0,
+                pkgPriceSellIsValid: payload.pkgPriceSell > 0,
+                unitPriceIsValid: payload.unitPrice > 0,
             };
-
-            // id: -1,
-            // titleEntry: "",
-            // categoryEntry: "",
-            // descEntry: "",
-            // pkgCapEntry: "",
-            // pkgPriceBuyEntry: "",
-            // pkgPriceSellEntry: "",
-            // unitPriceEntry: "",
         }
 
-        // case ProductActions.VALIDATE_TITLE: {
-        //     return { ...state, titleIsValid: payload }
-        // }
+        case ProductActions.CHANGE_TITLE: {
+            return { ...state, titleEntry: payload, titleIsValid: payload.length > 3 }
+        }
 
-        // case ProductActions.VALIDATE_PKG_CAP: {
-        //     return { ...state, pkgCapIsValid: payload }
-        // }
+        case ProductActions.CHANGE_CATEGORY: {
+            return { ...state, categoryEntry: payload }
+        }
 
-        // case ProductActions.VALIDATE_PKG_PRICE_BUY: {
-        //     return { ...state, pkgPriceBuyIsValid: payload }
-        // }
+        case ProductActions.CHANGE_DESC: {
+            return { ...state, descEntry: payload }
+        }
 
-        // case ProductActions.VALIDATE_PKG_PRICE_SELL: {
-        //     return { ...state, pkgPriceSellIsValid: payload }
-        // }
+        case ProductActions.CHANGE_PKG_CAP: {
+            return { ...state, pkgCapEntry: payload, pkgCapIsValid: payload > 0 }
+        }
 
-        // case ProductActions.VALIDATE_UNIT_PRICE: {
-        //     return { ...state, unitPriceIsValid: payload }
-        // }
+        case ProductActions.CHANGE_PKG_PRICE_BUY: {
+            return { ...state, pkgPriceBuyEntry: payload, pkgPriceBuyIsValid: payload > 0 }
+        }
+
+        case ProductActions.CHANGE_PKG_PRICE_SELL: {
+            return { ...state, pkgPriceSellEntry: payload, pkgPriceSellIsValid: payload > 0 }
+        }
+
+        case ProductActions.CHANGE_UNIT_PRICE: {
+            return { ...state, unitPriceEntry: payload, unitPriceIsValid: payload > 0 }
+        }
+
+        case ProductActions.VALIDATE_PHOTO: {
+            return { ...state, photoIsValid: payload };
+        }
+
+        case ProductActions.VALIDATE_EDIT_FROM: {
+            return { ...state, editFormIsValid: payload }
+        }
 
         default:
             return state;
@@ -151,20 +167,11 @@ const ProductDetails: FC = () => {
     const params = useParams();
     const productId = parseInt(params.productId as string);
 
-    // const [product, setProduct] = useState<Product>(productInitialState);
     const [files, setFiles] = useState([]);
-
     const [editMood, setEditMood] = useState(false);
 
-    // Validation State
+    // Product State
     const [productState, dispatchProduct] = useReducer(productReducer, productInitialState);
-
-    useEffect(() => {
-        dispatchProduct({
-            type: ProductActions.VALIDATE_PHOTO,
-            payload: files.length > 0,
-        });
-    }, [files]);
 
     useEffect(() => {
         // Fetch Product details
@@ -186,38 +193,51 @@ const ProductDetails: FC = () => {
         })();
     }, []);
 
-    function titleChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        console.log("hi");
+    useEffect(() => {
+        dispatchProduct({
+            type: ProductActions.VALIDATE_PHOTO,
+            payload: files.length > 0,
+        });
+    }, [files]);
 
+    // Validate Edit form
+    const { titleIsValid, pkgCapIsValid, pkgPriceSellIsValid, pkgPriceBuyIsValid, unitPriceIsValid } = productState;
+
+    useEffect(() => {
+        const isFormValid = titleIsValid && pkgCapIsValid && pkgPriceSellIsValid && pkgPriceBuyIsValid && unitPriceIsValid;
+        dispatchProduct({type: ProductActions.VALIDATE_EDIT_FROM, payload: isFormValid});
+    }, [titleIsValid, pkgCapIsValid, pkgPriceSellIsValid, pkgPriceBuyIsValid, unitPriceIsValid]);
+
+    function titleChangeHandler(event: ChangeEvent<HTMLInputElement>) {
+        dispatchProduct({ type: ProductActions.CHANGE_TITLE, payload: event.target.value })
     }
 
     function categoryChangeHandler(event: ChangeEvent<HTMLSelectElement>) {
-        console.log("hi");
+        dispatchProduct({type: ProductActions.CHANGE_CATEGORY, payload: event.target.value});
 
     }
 
     function descChangeHandler(event: ChangeEvent<HTMLTextAreaElement>) {
-        console.log("hi");
-
+        dispatchProduct({type: ProductActions.CHANGE_DESC, payload: event.target.value});
     }
 
     function pkgCapChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        console.log("hi");
+        dispatchProduct({ type: ProductActions.CHANGE_PKG_CAP, payload: +event.target.value })
 
     }
 
     function pkgPriceBuyChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        console.log("hi");
+        dispatchProduct({ type: ProductActions.CHANGE_PKG_PRICE_BUY, payload: +event.target.value })
 
     }
 
     function pkgPriceSellChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        console.log("hi");
+        dispatchProduct({ type: ProductActions.CHANGE_PKG_PRICE_SELL, payload: +event.target.value })
 
     }
 
     function unitPriceChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        console.log("hi");
+        dispatchProduct({ type: ProductActions.CHANGE_UNIT_PRICE, payload: +event.target.value })
 
     }
 
@@ -232,11 +252,18 @@ const ProductDetails: FC = () => {
 
         // Call uploadFile function from API
         const product: Product = await uploadProductPhoto(productId, files);
-        dispatchProduct({type: ProductActions.LOAD_PHOTO, payload: product.photo!})
+        dispatchProduct({ type: ProductActions.LOAD_PHOTO, payload: product.photo! });
     }
 
     function editClickHandler() {
         setEditMood((prevState) => !prevState);
+    }
+
+    function productEditFromSubmitHandler(event: any) {
+        event.preventDefault();
+
+        console.log(productState);
+        
     }
 
     return (
@@ -293,7 +320,7 @@ const ProductDetails: FC = () => {
                 />
             </div>
             <div className="divider"></div>
-            <form>
+            <form onSubmit={productEditFromSubmitHandler}>
                 <input
                     type="text"
                     placeholder="title"
@@ -371,12 +398,12 @@ const ProductDetails: FC = () => {
                 <input
                     type="number"
                     placeholder="unit price"
-                    className="input input-bordered w-48 max-w-xs m-2"
+                    className={"input input-bordered w-48 max-w-xs m-2 " + (!productState.unitPriceIsValid ? "border-rose-600 border-2" : "")}
                     disabled={!editMood}
                     value={productState.unitPriceEntry}
                     onChange={unitPriceChangeHandler}
                 />
-                <button className="btn m-2" disabled>
+                <button type="submit" className="btn m-2" disabled={!productState.editFormIsValid || !editMood}>
                     Submit
                 </button>
             </form>
