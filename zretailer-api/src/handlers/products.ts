@@ -1,3 +1,4 @@
+import { Product } from "@prisma/client";
 import prisma from "../client";
 
 import { ProductToCreate } from "../interfaces/Product";
@@ -36,6 +37,23 @@ export async function getProductTitles() {
             title: true,
         },
     });
+}
+
+export async function updateProductData(product: Product) {
+    return await prisma.product.update({
+        where: {
+            id: product.id,
+        },
+        data: {
+            title: product.title,
+            category: product.category,
+            desc: product.desc,
+            pkgCap: product.pkgCap,
+            pkgPriceBuy: product.pkgPriceBuy,
+            pkgPriceSell: product.pkgPriceSell,
+            unitPrice: product.unitPrice
+        }
+    })
 }
 
 export async function updateProductPhoto(productId: number, fileName: string) {

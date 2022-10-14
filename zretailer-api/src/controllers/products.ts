@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
+import { Product } from "@prisma/client";
 import multer from "multer";
 import { validationResult } from "express-validator";
 import {
@@ -7,6 +8,7 @@ import {
     getOneProduct,
     getProductTitles,
     updateProductPhoto,
+    updateProductData
 } from "../handlers/products";
 
 import * as Validations from "../validations/products";
@@ -129,5 +131,26 @@ router.post(
         }
     }
 );
+
+router.put("/products", async (req: Request, res: Response, next: NextFunction) => {
+    const productToEdit: Product = {
+        id: +req.body.id,
+        title: req.body.title,
+        category: req.body.category,
+        desc: req.body.desc,
+        pkgCap: +req.body.pkgCap,
+        pkgPriceBuy: +req.body.pkgPriceBuy,
+        pkgPriceSell: +req.body.pkgPriceSell,
+        unitPrice: +req.body.unitPrice,
+        photo: null
+    }
+
+    try {
+        const product = await updateProductData(productToEdit);
+        res.json(product);
+    } catch (error) {
+        next();
+    }
+});
 
 export default router;

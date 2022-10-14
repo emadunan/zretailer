@@ -6,8 +6,8 @@ import {
     useReducer,
     useState,
 } from "react";
-import { Link, useParams } from "react-router-dom";
-import { getOneProduct, uploadProductPhoto } from "../api/products";
+import { redirect, useParams, useNavigate } from "react-router-dom";
+import { getOneProduct, uploadProductPhoto, updateProduct } from "../api/products";
 import { Categories } from "../data/categories";
 import { Product } from "../interfaces/Product";
 
@@ -164,6 +164,7 @@ function productReducer(state: ProductState, action: ProductAction) {
 // }
 
 const ProductDetails: FC = () => {
+    const navigate = useNavigate();
     const params = useParams();
     const productId = parseInt(params.productId as string);
 
@@ -259,22 +260,38 @@ const ProductDetails: FC = () => {
         setEditMood((prevState) => !prevState);
     }
 
-    function productEditFromSubmitHandler(event: any) {
+    async function productEditFromSubmitHandler(event: any) {
         event.preventDefault();
 
-        console.log(productState);
+        const productToUpdate: Product = {
+            id: productState.id,
+            title: productState.titleEntry,
+            category: productState.categoryEntry,
+            desc: productState.descEntry,
+            pkgCap: productState.pkgCapEntry,
+            pkgPriceBuy: productState.pkgPriceBuyEntry,
+            pkgPriceSell: productState.pkgPriceSellEntry,
+            unitPrice: productState.unitPriceEntry,
+        }
+
+        const product = await updateProduct(productToUpdate);
+        dispatchProduct({type: ProductActions.LOAD_PRODUCT, payload: product});
+        setEditMood(false);
         
     }
 
     return (
         <Fragment>
             <div className="flex justify-between mx-2 mt-8 mb-2">
-                <Link
-                    to={".."}
+                <button
                     className="text-blue-900 hover:text-blue-400 font-bold underline"
+                    onClick={() => {
+                        console.log("Clicked");
+                        navigate("/admin/products", {replace: true})
+                    }}
                 >
                     Back
-                </Link>
+                </button>
                 <h1 className="text-lg text-blue-900 font-bold">
                     PRODUCT UNIQUE NUMBER: {productState.id}
                 </h1>

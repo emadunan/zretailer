@@ -32,7 +32,7 @@ const ProductsTbl: FC<{
                             return (
                                 <ProductRow
                                     key={prod.id}
-                                    id={prod.id!}
+                                    id={prod.id as unknown as string}
                                     idx={++idx}
                                     title={prod.title}
                                     category={prod.category}
