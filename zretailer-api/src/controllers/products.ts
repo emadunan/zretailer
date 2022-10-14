@@ -8,7 +8,8 @@ import {
     getOneProduct,
     getProductTitles,
     updateProductPhoto,
-    updateProductData
+    updateProductData,
+    deleteProduct
 } from "../handlers/products";
 
 import * as Validations from "../validations/products";
@@ -147,6 +148,17 @@ router.put("/products", async (req: Request, res: Response, next: NextFunction) 
 
     try {
         const product = await updateProductData(productToEdit);
+        res.json(product);
+    } catch (error) {
+        next();
+    }
+});
+
+router.delete("/products/:productId", async (req: Request, res: Response, next: NextFunction) => {
+    const productId = +req.params.productId;
+
+    try {
+        const product = await deleteProduct(productId);
         res.json(product);
     } catch (error) {
         next();

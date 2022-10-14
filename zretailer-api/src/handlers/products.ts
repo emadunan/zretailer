@@ -66,3 +66,11 @@ export async function updateProductPhoto(productId: number, fileName: string) {
         },
     });
 }
+
+export async function deleteProduct(productId: number) {
+    return await prisma.product.delete({
+        where: {
+            id: productId
+        }
+    });
+}

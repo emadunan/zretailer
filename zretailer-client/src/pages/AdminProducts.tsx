@@ -70,7 +70,7 @@ const AdminProducts: FC = () => {
         productsReducer,
         initialState
     );
-    
+
 
     useEffect(() => {
         dispatchProduct({
@@ -80,14 +80,14 @@ const AdminProducts: FC = () => {
     }, [loaderData.products, haveProductIdParam]);
 
     useEffect(() => {
-       (async () => {
-        // Get products and persist it in product state
-        const data = await getProducts(productState.currentPage, productState.pageSize);
-        dispatchProduct({
-            type: ProductActions.RENDER_PRODUCTS,
-            payload: { ...data, currentPage: productState.currentPage },
-        });
-       })()
+        (async () => {
+            // Get products and persist it in product state
+            const data = await getProducts(productState.currentPage, productState.pageSize);
+            dispatchProduct({
+                type: ProductActions.RENDER_PRODUCTS,
+                payload: { ...data, currentPage: productState.currentPage },
+            });
+        })()
     }, [haveProductIdParam])
 
     async function getPageProductsHandler(page = 1, size = 4) {

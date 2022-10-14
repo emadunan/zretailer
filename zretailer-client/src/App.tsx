@@ -20,6 +20,7 @@ import AdminOffers from "./pages/AdminOffers";
 import NotFound from "./pages/Not-Found";
 import ErrorPage from "./pages/ErrorPage";
 import ProductForm from "./components/Product/ProductForm";
+import EndToast from "./components/UI/EndToast";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -50,6 +51,7 @@ function App() {
     return (
         <div className="mx-6">
             <RouterProvider router={router} />
+            <EndToast />
         </div>
     );
 }

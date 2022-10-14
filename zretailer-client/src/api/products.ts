@@ -69,5 +69,13 @@ export async function updateProduct(product: Product) {
 
     if (!response.ok) throw new Error("Failed to update product!");
     return await response.json();
-    
+}
+
+export async function deleteProduct(productId: number) {
+    const response = await fetch(`${apiUrl}/products/${productId}`, {
+        method: "DELETE",
+    });
+
+    if (!response.ok) throw new Error(response.statusText);
+    return response.json();
 }

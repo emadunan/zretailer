@@ -6,8 +6,8 @@ import {
     useReducer,
     useState,
 } from "react";
-import { Link, useParams } from "react-router-dom";
-import { getOneProduct, uploadProductPhoto, updateProduct } from "../api/products";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { getOneProduct, uploadProductPhoto, updateProduct, deleteProduct } from "../api/products";
 import { Categories } from "../data/categories";
 import { Product } from "../interfaces/Product";
 
@@ -164,6 +164,7 @@ function productReducer(state: ProductState, action: ProductAction) {
 // }
 
 const ProductDetails: FC = () => {
+    const navigate = useNavigate();
     const params = useParams();
     const productId = parseInt(params.productId as string);
 
@@ -205,7 +206,7 @@ const ProductDetails: FC = () => {
 
     useEffect(() => {
         const isFormValid = titleIsValid && pkgCapIsValid && pkgPriceSellIsValid && pkgPriceBuyIsValid && unitPriceIsValid;
-        dispatchProduct({type: ProductActions.VALIDATE_EDIT_FROM, payload: isFormValid});
+        dispatchProduct({ type: ProductActions.VALIDATE_EDIT_FROM, payload: isFormValid });
     }, [titleIsValid, pkgCapIsValid, pkgPriceSellIsValid, pkgPriceBuyIsValid, unitPriceIsValid]);
 
     function titleChangeHandler(event: ChangeEvent<HTMLInputElement>) {
@@ -213,12 +214,12 @@ const ProductDetails: FC = () => {
     }
 
     function categoryChangeHandler(event: ChangeEvent<HTMLSelectElement>) {
-        dispatchProduct({type: ProductActions.CHANGE_CATEGORY, payload: event.target.value});
+        dispatchProduct({ type: ProductActions.CHANGE_CATEGORY, payload: event.target.value });
 
     }
 
     function descChangeHandler(event: ChangeEvent<HTMLTextAreaElement>) {
-        dispatchProduct({type: ProductActions.CHANGE_DESC, payload: event.target.value});
+        dispatchProduct({ type: ProductActions.CHANGE_DESC, payload: event.target.value });
     }
 
     function pkgCapChangeHandler(event: ChangeEvent<HTMLInputElement>) {
@@ -274,9 +275,13 @@ const ProductDetails: FC = () => {
         }
 
         const product = await updateProduct(productToUpdate);
-        dispatchProduct({type: ProductActions.LOAD_PRODUCT, payload: product});
+        dispatchProduct({ type: ProductActions.LOAD_PRODUCT, payload: product });
         setEditMood(false);
-        
+    }
+
+    async function productDeleteHandler(_event: any) {
+        const deletedProduct = await deleteProduct(productState.id);
+        if (deletedProduct.id) navigate("..", { replace: true });
     }
 
     return (
@@ -298,7 +303,7 @@ const ProductDetails: FC = () => {
                     >
                         {editMood ? "Done" : "Edit"}
                     </button>
-                    <button className="btn btn-sm btn-secondary mx-1">
+                    <button className="btn btn-sm btn-secondary mx-1" onClick={productDeleteHandler}>
                         Delete
                     </button>
                 </div>
