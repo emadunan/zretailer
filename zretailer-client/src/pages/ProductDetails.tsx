@@ -6,7 +6,7 @@ import {
     useReducer,
     useState,
 } from "react";
-import { redirect, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getOneProduct, uploadProductPhoto, updateProduct } from "../api/products";
 import { Categories } from "../data/categories";
 import { Product } from "../interfaces/Product";
@@ -164,7 +164,6 @@ function productReducer(state: ProductState, action: ProductAction) {
 // }
 
 const ProductDetails: FC = () => {
-    const navigate = useNavigate();
     const params = useParams();
     const productId = parseInt(params.productId as string);
 
@@ -283,15 +282,12 @@ const ProductDetails: FC = () => {
     return (
         <Fragment>
             <div className="flex justify-between mx-2 mt-8 mb-2">
-                <button
+                <Link
+                    to={".."}
                     className="text-blue-900 hover:text-blue-400 font-bold underline"
-                    onClick={() => {
-                        console.log("Clicked");
-                        navigate("/admin/products", {replace: true})
-                    }}
                 >
                     Back
-                </button>
+                </Link>
                 <h1 className="text-lg text-blue-900 font-bold">
                     PRODUCT UNIQUE NUMBER: {productState.id}
                 </h1>
